@@ -19,8 +19,8 @@ renderer.setPixelRatio(window.devicePixelRatio)
 
 //create a sphere
 const sphere = new THREE.Mesh(new THREE.SphereGeometry(5, 50, 50), new THREE.MeshBasicMaterial({
-    color: '#000000',
-    wireframe: true,
+    map: new THREE.TextureLoader().load('./img/dot.png'),
+    opacity: 0.1,
     transparent: true,
 }))
 
@@ -38,7 +38,7 @@ function createPoint(lat, lng, papername, contents) {
         new THREE.BoxGeometry(0.15, 0.15, 0.15),
         new THREE.MeshBasicMaterial({
             color: '#3bf7ff',
-            opacity: 0.5,
+            opacity: 1,
             transparent: true,
         }),
 
@@ -149,7 +149,7 @@ const conEl = document.querySelector('#conEl')
 function animate() {
     requestAnimationFrame(animate)
     renderer.render(scene, camera)
-    group.rotation.y += 0.003
+    group.rotation.y += 0.0002
 
     /* if (mouse.x) {
         gsap.to(group.rotation, {
@@ -168,7 +168,7 @@ function animate() {
     }))
 
     group.children.forEach((mesh) => {
-        mesh.material.opacity = 0.5
+        mesh.material.opacity = 1
     })
 
     gsap.set(popUpEl, {
@@ -177,7 +177,7 @@ function animate() {
 
     for (let i = 0; i < intersects.length; i++) {
         const box = intersects[i].object
-        box.material.opacity = 1
+        box.material.opacity = 0.5
 
         gsap.set(popUpEl, {
             display: 'block'
@@ -239,18 +239,14 @@ console.log(dot)
 
 for (let i = 0; i < dot.length; i++) {
     const box = dot[i]
-    console.log(box)
     points.push(new THREE.Vector3(box.position.x + 0.1, box.position.y + 0.1, box.position.z + 0.1));
 }
 
 const geometry = new THREE.BufferGeometry().setFromPoints(points);
 
 const line = new THREE.Line(geometry, material);
-console.log(line)
 line.material.linewidth = 0.1
 line.material.opacity = 0.1
-line.material.transparent = true
-
 
 
 scene.add(line);
