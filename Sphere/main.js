@@ -1,6 +1,10 @@
 import gsap from 'gsap'
 import * as THREE from 'three'
-import { BoxGeometry, Texture } from 'three'
+
+import { Lensflare, LensflareElement } from './flare.js';
+
+import atmosphereVertexShader from './shaders/atmosphereVertex.glsl'
+import atmosphereFragmentShader from './shaders/atmosphereFragment.glsl'
 
 const canvasContainer = document.querySelector('#canvasContainer')
 const scene = new THREE.Scene()
@@ -24,7 +28,6 @@ const sphere = new THREE.Mesh(new THREE.SphereGeometry(5, 50, 50), new THREE.Mes
     transparent: true,
 }))
 
-
 scene.add(sphere)
 
 const group = new THREE.Group()
@@ -33,13 +36,55 @@ scene.add(group)
 
 camera.position.z = 13
 
+
+// lights
+
+const dirLight = new THREE.DirectionalLight(0xffffff, 0.05);
+dirLight.position.set(0, -1, 0).normalize();
+dirLight.color.setHSL(0.1, 0.7, 0.5);
+scene.add(dirLight);
+
+// lensflares
+
+addLight(0.55, 0.9, 0.5);
+addLight(0.08, 0.8, 0.5);
+addLight(0.995, 0.5, 0.9);
+
+function addLight(h, s, l) {
+
+    const light = new THREE.PointLight(0xffffff, 1.5, 2000000000);
+    light.color.setHSL(h, s, l);
+    light.position.set(0, 0, 0);
+    scene.add(light);
+
+    const textureLoader = new THREE.TextureLoader();
+
+    const textureFlare0 = textureLoader.load('./img/lensflare0.png');
+    const textureFlare3 = textureLoader.load('./img/lensflare3.png');
+
+
+    const lensflare = new Lensflare();
+    lensflare.addElement(new LensflareElement(textureFlare0, 700, 0, light.color));
+    lensflare.addElement(new LensflareElement(textureFlare3, 60, 0.6));
+    lensflare.addElement(new LensflareElement(textureFlare3, 70, 0.7));
+    lensflare.addElement(new LensflareElement(textureFlare3, 120, 0.9));
+    lensflare.addElement(new LensflareElement(textureFlare3, 70, 1));
+    light.add(lensflare);
+
+    console.log(light)
+
+}
+
+
+
 function createPoint(lat, lng, papername, contents) {
     const box = new THREE.Mesh(
         new THREE.BoxGeometry(0.15, 0.15, 0.15),
-        new THREE.MeshBasicMaterial({
-            color: '#3bf7ff',
-            opacity: 1,
-            transparent: true,
+        new THREE.ShaderMaterial({
+            vertexShader: atmosphereVertexShader,
+            fragmentShader: atmosphereFragmentShader,
+            blending: THREE.AdditiveBlending,
+            side: THREE.BackSide
         }),
 
     )
@@ -235,8 +280,6 @@ const dot = group.children.filter(mesh => {
     return mesh.geometry.type === "BoxGeometry"
 })
 
-console.log(dot)
-
 for (let i = 0; i < dot.length; i++) {
     const box = dot[i]
     points.push(new THREE.Vector3(box.position.x + 0.1, box.position.y + 0.1, box.position.z + 0.1));
@@ -247,7 +290,8 @@ const geometry = new THREE.BufferGeometry().setFromPoints(points);
 const line = new THREE.Line(geometry, material);
 line.material.linewidth = 0.1
 line.material.opacity = 0.1
-
+line.receiveShadow = true
+console.log(line)
 
 scene.add(line);
 group.add(line)
