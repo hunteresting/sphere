@@ -3,13 +3,38 @@
 
 <head>
     <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@500&display=swap" rel="stylesheet">
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <style type="text/css">
+        p {
+            font-family: 'Red Hat Display', sans-serif;
+        }
+    </style>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.tailwindcss.com"></script>
     <title>Vite App</title>
 </head>
 
 <body>
+    <div class="absolute m-44">
+        <div class="pt-10 block">
+            <p class="text-white ml-10 text-4xl leading-relaxed preconnect">Explore our<br> World Class Researched</p>
+        </div>
+        <div class="pt-10 block">
+            <input type="checkbox" class="checked:bg-blue-500 inline mr-2 ml-10 my-3" id="AIEd">
+            <p class="z-100 text-blue-500 my-3 inline font-extrabold">AIEd</p>
+        </div>
+        <div class="block">
+            <input type="checkbox" class="checked:bg-blue-500 inline mr-2 ml-10 my-3" id="NLP">
+            <p class="z-100 text-indigo-400 my-3 inline font-extrabold">NLP</p>
+        </div>
+        <div class="block">
+            <input type="checkbox" class="checked:bg-blue-500 inline mr-2 ml-10 my-3" id="CV">
+            <p class="z-100 text-sky-300 my-3 inline font-extrabold">Computer Vision</p>
+        </div>
+    </div>
     <div id="popUpEl" class="bg-black bg-opacity-50 fixed px-4 py-2">
         <h2 id="headEl" class="text-white text-xs">classification</h2>
         <p id="conEl" class="text-white font-bold text-lg">Paper Name</p>

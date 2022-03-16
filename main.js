@@ -5,7 +5,6 @@ import { Lensflare, LensflareElement } from './flare.js';
 import vertexShader from './shaders/vertex.glsl'
 import fragmentShader from './shaders/fragment.glsl'
 import atmosphereVertexShader from './shaders/atmosphereVertex.glsl'
-import atmosphereFragmentShader from './shaders/atmosphereFragment.glsl'
 
 const canvasContainer = document.querySelector('#canvasContainer')
 const scene = new THREE.Scene()
@@ -24,17 +23,15 @@ scene.background = new THREE.Color(0x01152E)
 renderer.setSize(canvasContainer.offsetWidth, canvasContainer.offsetHeight)
 renderer.setPixelRatio(window.devicePixelRatio)
 
-//create a sphere
 const sphere = new THREE.Mesh(new THREE.SphereGeometry(5, 50, 50),
     new THREE.ShaderMaterial({
+        vertexShader,
         fragmentShader
     }))
 
 sphere.material.alphaTest = 1
 sphere.material.opacity = 0
 sphere.material.transparent = true
-
-console.log(sphere)
 
 scene.add(sphere)
 
@@ -71,12 +68,11 @@ const light = new THREE.Light(0xffffff, 1.5, 2000);
 light.color.setHSL(0.995, 0.5, 0.9);
 
 const textureLoader = new THREE.TextureLoader();
-const textureFlare0 = textureLoader.load('./img/lensflare0.png');
 const textureFlare3 = textureLoader.load('./img/lensflare3.png');
 
 
 const lensflare = new Lensflare();
-//lensflare.addElement(new LensflareElement(textureFlare0, 200, 0, light.color));
+
 lensflare.addElement(new LensflareElement(textureFlare3, 500, 0.6));
 lensflare.addElement(new LensflareElement(textureFlare3, 1000, 0.7));
 
@@ -172,6 +168,8 @@ for (let i = 0; i < 1000; i++) {
 
 }
 
+const NLP = new THREE.Group()
+group.add(NLP)
 
 function createBlue(lat, lng, papername, contents) {
     const box = new THREE.Mesh(
@@ -200,7 +198,7 @@ function createBlue(lat, lng, papername, contents) {
     box.lookAt(0, 0, 0)
     box.geometry.applyMatrix4(new THREE.Matrix4().makeTranslation(0, 0, -0.4))
 
-    group.add(box)
+    NLP.add(box)
 
     box.papername = papername
     box.contents = contents
@@ -213,6 +211,9 @@ for (let i = 0; i < 50; i++) {
     createBlue(a.real, b.real, 'Classification', 'Headline')
 
 }
+
+const CV = new THREE.Group()
+group.add(CV)
 
 function createblue2(lat, lng, papername, contents) {
     const box = new THREE.Mesh(
@@ -240,7 +241,7 @@ function createblue2(lat, lng, papername, contents) {
     box.lookAt(0, 0, 0)
     box.geometry.applyMatrix4(new THREE.Matrix4().makeTranslation(0, 0, -0.4))
 
-    group.add(box)
+    CV.add(box)
 
     box.papername = papername
     box.contents = contents
@@ -253,6 +254,9 @@ for (let i = 0; i < 50; i++) {
     createblue2(a.real, b.real, 'Classification', 'Headline')
 
 }
+
+const AIEd = new THREE.Group()
+group.add(AIEd)
 
 function createblue3(lat, lng, papername, contents) {
     const box = new THREE.Mesh(
@@ -281,7 +285,7 @@ function createblue3(lat, lng, papername, contents) {
     box.lookAt(0, 0, 0)
     box.geometry.applyMatrix4(new THREE.Matrix4().makeTranslation(0, 0, -0.4))
 
-    group.add(box)
+    AIEd.add(box)
 
     box.papername = papername
     box.contents = contents
@@ -320,33 +324,51 @@ function animate() {
     renderer.render(scene, camera)
     group.rotation.y += 0.0002
 
-    /* if (mouse.x) {
-        gsap.to(group.rotation, {
-            x: -mouse.y * 0.5,
-            y: mouse.x * 0.5,
-            duration: 1.5
-        })
-    }*/
-
-    // update the picking ray with the camera and pointer position
     raycaster.setFromCamera(mouse, camera)
 
-    // calculate objects intersecting the picking ray
-    const intersects = raycaster.intersectObjects(group.children.filter(mesh => {
+    const intersects1 = raycaster.intersectObjects(AIEd.children.filter(mesh => {
         return mesh.geometry.type === "BoxGeometry"
     }))
 
-    group.children.forEach((mesh) => {
-        mesh.material.opacity = 1
-    })
+    const intersects2 = raycaster.intersectObjects(NLP.children.filter(mesh => {
+        return mesh.geometry.type === "BoxGeometry"
+    }))
+
+    const intersects3 = raycaster.intersectObjects(CV.children.filter(mesh => {
+        return mesh.geometry.type === "BoxGeometry"
+    }))
 
     gsap.set(popUpEl, {
         display: 'none'
     })
 
-    for (let i = 0; i < intersects.length; i++) {
-        const box = intersects[i].object
-        box.material.opacity = 0.5
+    for (let i = 0; i < intersects1.length; i++) {
+
+        const box = intersects1[i].object
+
+        gsap.set(popUpEl, {
+            display: 'block'
+        })
+
+        headEl.innerHTML = box.papername
+        conEl.innerHTML = box.contents
+    }
+
+    for (let i = 0; i < intersects2.length; i++) {
+
+        const box = intersects2[i].object
+
+        gsap.set(popUpEl, {
+            display: 'block'
+        })
+
+        headEl.innerHTML = box.papername
+        conEl.innerHTML = box.contents
+    }
+
+    for (let i = 0; i < intersects3.length; i++) {
+
+        const box = intersects3[i].object
 
         gsap.set(popUpEl, {
             display: 'block'
@@ -401,17 +423,49 @@ const shaderMaterial = new THREE.ShaderMaterial({
 
 const points = [];
 
-const dot = group.children.filter(mesh => {
+const AIEddot = AIEd.children.filter(mesh => {
     return mesh.geometry.type === "BoxGeometry"
 })
 
-for (let i = 0; i < dot.length; i++) {
-    const box = dot[i]
+const NLPdot = NLP.children.filter(mesh => {
+    return mesh.geometry.type === "BoxGeometry"
+})
+
+const CVdot = CV.children.filter(mesh => {
+    return mesh.geometry.type === "BoxGeometry"
+})
+
+for (let i = 0; i < AIEddot.length; i++) {
+    const box = AIEddot[i]
+    points.push(new THREE.Vector3(box.position.x, box.position.y, box.position.z));
+}
+
+for (let i = 0; i < NLPdot.length; i++) {
+    const box = NLPdot[i]
+    points.push(new THREE.Vector3(box.position.x, box.position.y, box.position.z));
+}
+
+for (let i = 0; i < AIEddot.length; i++) {
+    const box = AIEddot[i]
     points.push(new THREE.Vector3(box.position.x, box.position.y, box.position.z));
 }
 
 const geometry = new THREE.BufferGeometry().setFromPoints(points);
-const line = new THREE.LineSegments(geometry, shaderMaterial);
+const line = new THREE.Line(geometry, shaderMaterial);
 
 scene.add(line);
 group.add(line)
+
+const checkboxAIEd = document.getElementById("AIEd")
+const checkboxNLP = document.getElementById("NLP")
+const checkboxCV = document.getElementById("CV")
+
+console.log(NLP)
+
+checkboxAIEd.addEventListener('change', function() {
+    if (this.checked) {
+        console.log("Checkbox is checked..");
+    } else {
+        console.log("Checkbox is not checked..");
+    }
+});
