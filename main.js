@@ -40,7 +40,7 @@ group.add(sphere)
 scene.add(group)
 
 const starVertices = []
-for (let i = 0; i < 2000; i++) {
+for (let i = 0; i < 500; i++) {
     const x = (Math.random() - 0.5) * 2000
     const y = (Math.random() - 0.5) * 2000
     const z = -Math.random() * 3000
@@ -49,7 +49,7 @@ for (let i = 0; i < 2000; i++) {
 
 const starGeometry = new THREE.BufferGeometry()
 const starMaterial = new THREE.PointsMaterial({
-    color: 0xffffff
+    color: 0x80B6FF
 })
 
 starGeometry.setAttribute(
