@@ -2,12 +2,10 @@ import gsap from 'gsap'
 import * as THREE from 'three'
 
 import { Lensflare, LensflareElement } from './flare.js';
-
+import vertexShader from './shaders/vertex.glsl'
+import fragmentShader from './shaders/fragment.glsl'
 import atmosphereVertexShader from './shaders/atmosphereVertex.glsl'
 import atmosphereFragmentShader from './shaders/atmosphereFragment.glsl'
-import atmosphereFragmentShader2 from './shaders/atmosphereFragment2.glsl'
-import atmosphereFragmentShader3 from './shaders/atmosphereFragment3.glsl'
-import atmosphereFragmentShader4 from './shaders/atmosphereFragment4.glsl'
 
 const canvasContainer = document.querySelector('#canvasContainer')
 const scene = new THREE.Scene()
@@ -27,11 +25,16 @@ renderer.setSize(canvasContainer.offsetWidth, canvasContainer.offsetHeight)
 renderer.setPixelRatio(window.devicePixelRatio)
 
 //create a sphere
-const sphere = new THREE.Mesh(new THREE.SphereGeometry(5, 50, 50), new THREE.MeshBasicMaterial({
-    map: new THREE.TextureLoader().load('./img/dots.svg'),
-    opacity: 0.1,
-    transparent: true,
-}))
+const sphere = new THREE.Mesh(new THREE.SphereGeometry(5, 50, 50),
+    new THREE.ShaderMaterial({
+        fragmentShader
+    }))
+
+sphere.material.alphaTest = 1
+sphere.material.opacity = 0
+sphere.material.transparent = true
+
+console.log(sphere)
 
 scene.add(sphere)
 
@@ -73,9 +76,9 @@ const textureFlare3 = textureLoader.load('./img/lensflare3.png');
 
 
 const lensflare = new Lensflare();
-lensflare.addElement(new LensflareElement(textureFlare0, 2000, 0, light.color));
-lensflare.addElement(new LensflareElement(textureFlare3, 1500, 0.6));
-lensflare.addElement(new LensflareElement(textureFlare3, 3000, 0.7));
+//lensflare.addElement(new LensflareElement(textureFlare0, 200, 0, light.color));
+lensflare.addElement(new LensflareElement(textureFlare3, 500, 0.6));
+lensflare.addElement(new LensflareElement(textureFlare3, 1000, 0.7));
 
 
 light.add(lensflare);
@@ -173,11 +176,10 @@ for (let i = 0; i < 1000; i++) {
 function createBlue(lat, lng, papername, contents) {
     const box = new THREE.Mesh(
         new THREE.BoxGeometry(0.15, 0.15, 0.15),
-        new THREE.ShaderMaterial({
-            vertexShader: atmosphereVertexShader,
-            fragmentShader: atmosphereFragmentShader3,
-            blending: THREE.AdditiveBlending,
-            side: THREE.BackSide
+        new THREE.MeshBasicMaterial({
+            color: '#8097f9',
+            opacity: 1,
+            transparent: true
         }),
 
     )
@@ -212,16 +214,14 @@ for (let i = 0; i < 50; i++) {
 
 }
 
-function createWhite(lat, lng, papername, contents) {
+function createblue2(lat, lng, papername, contents) {
     const box = new THREE.Mesh(
         new THREE.BoxGeometry(0.15, 0.15, 0.15),
-        new THREE.ShaderMaterial({
-            vertexShader: atmosphereVertexShader,
-            fragmentShader: atmosphereFragmentShader3,
-            blending: THREE.AdditiveBlending,
-            side: THREE.BackSide
+        new THREE.MeshBasicMaterial({
+            color: '#82d3ff',
+            opacity: 1,
+            transparent: true
         }),
-
     )
 
     const latitude = (lat / 180) * Math.PI
@@ -250,18 +250,17 @@ function createWhite(lat, lng, papername, contents) {
 for (let i = 0; i < 50; i++) {
     var a = getRandomNumber(-90, 90)
     var b = getRandomNumber(-180, 180)
-    createWhite(a.real, b.real, 'Classification', 'Headline')
+    createblue2(a.real, b.real, 'Classification', 'Headline')
 
 }
 
-function createGreen(lat, lng, papername, contents) {
+function createblue3(lat, lng, papername, contents) {
     const box = new THREE.Mesh(
         new THREE.BoxGeometry(0.2, 0.2, 0.2),
-        new THREE.ShaderMaterial({
-            vertexShader: atmosphereVertexShader,
-            fragmentShader: atmosphereFragmentShader2,
-            blending: THREE.AdditiveBlending,
-            side: THREE.BackSide
+        new THREE.MeshBasicMaterial({
+            color: '#1462ff',
+            opacity: 1,
+            transparent: true
         }),
 
     )
@@ -292,49 +291,7 @@ function createGreen(lat, lng, papername, contents) {
 for (let i = 0; i < 50; i++) {
     var a = getRandomNumber(-90, 90)
     var b = getRandomNumber(-180, 180)
-    createGreen(a.real, b.real, 'Classification', 'Headline')
-
-}
-
-function createRed(lat, lng, papername, contents) {
-    const box = new THREE.Mesh(
-        new THREE.BoxGeometry(0.15, 0.15, 0.15),
-        new THREE.ShaderMaterial({
-            vertexShader: atmosphereVertexShader,
-            fragmentShader: atmosphereFragmentShader2,
-            blending: THREE.AdditiveBlending,
-            side: THREE.BackSide
-        }),
-
-    )
-
-    const latitude = (lat / 180) * Math.PI
-    const longitude = (lng / 180) * Math.PI
-    const radius = 4.7
-
-    const x = radius * Math.cos(latitude) * Math.sin(longitude)
-    const y = radius * Math.sin(latitude)
-    const z = radius * Math.cos(latitude) * Math.cos(longitude)
-
-
-    box.position.z = z
-    box.position.x = x
-    box.position.y = y
-
-    box.lookAt(0, 0, 0)
-    box.geometry.applyMatrix4(new THREE.Matrix4().makeTranslation(0, 0, -0.4))
-
-    group.add(box)
-
-    box.papername = papername
-    box.contents = contents
-}
-
-
-for (let i = 0; i < 50; i++) {
-    var a = getRandomNumber(-90, 90)
-    var b = getRandomNumber(-180, 180)
-    createRed(a.real, b.real, 'Classification', 'Headline')
+    createblue3(a.real, b.real, 'Classification', 'Headline')
 
 }
 
@@ -437,9 +394,10 @@ addEventListener('mouseup', (event) => {
     mouse.down = false
 })
 
-const material = new THREE.LineBasicMaterial({
-    color: 0x353535
-});
+const shaderMaterial = new THREE.ShaderMaterial({
+    vertexShader: atmosphereVertexShader,
+    fragmentShader
+})
 
 const points = [];
 
@@ -449,15 +407,11 @@ const dot = group.children.filter(mesh => {
 
 for (let i = 0; i < dot.length; i++) {
     const box = dot[i]
-    points.push(new THREE.Vector3(box.position.x + 0.1, box.position.y + 0.1, box.position.z + 0.1));
+    points.push(new THREE.Vector3(box.position.x, box.position.y, box.position.z));
 }
 
 const geometry = new THREE.BufferGeometry().setFromPoints(points);
-
-const line = new THREE.Line(geometry, material);
-line.material.linewidth = 0.1
-line.material.opacity = 0.1
-line.receiveShadow = true
+const line = new THREE.LineSegments(geometry, shaderMaterial);
 
 scene.add(line);
 group.add(line)
