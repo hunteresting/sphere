@@ -21,7 +21,7 @@ const renderer = new THREE.WebGLRenderer({
     canvas: document.querySelector('canvas')
 })
 
-scene.background = new THREE.Color(0x06172F);
+scene.background = new THREE.Color(0x01152E)
 
 renderer.setSize(canvasContainer.offsetWidth, canvasContainer.offsetHeight)
 renderer.setPixelRatio(window.devicePixelRatio)
@@ -38,6 +38,27 @@ scene.add(sphere)
 const group = new THREE.Group()
 group.add(sphere)
 scene.add(group)
+
+const starVertices = []
+for (let i = 0; i < 2000; i++) {
+    const x = (Math.random() - 0.5) * 2000
+    const y = (Math.random() - 0.5) * 2000
+    const z = -Math.random() * 3000
+    starVertices.push(x, y, z)
+}
+
+const starGeometry = new THREE.BufferGeometry()
+const starMaterial = new THREE.PointsMaterial({
+    color: 0xffffff
+})
+
+starGeometry.setAttribute(
+    'position',
+    new THREE.Float32BufferAttribute(starVertices, 3)
+)
+
+const stars = new THREE.Points(starGeometry, starMaterial)
+scene.add(stars)
 
 camera.position.z = 10
 
@@ -114,9 +135,9 @@ function getRandomNumber() {
 
 function createdots(lat, lng) {
     const dot = new THREE.Mesh(
-        new THREE.CircleGeometry(0.01, 32),
+        new THREE.CircleGeometry(0.015, 32),
         new THREE.MeshBasicMaterial({
-            color: '#FFFFFF'
+            color: '#FFFFFF',
         }),
 
     )
