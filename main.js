@@ -5,13 +5,6 @@ import { Lensflare, LensflareElement } from './flare.js';
 import vertexShader from './shaders/vertex.glsl'
 import fragmentShader from './shaders/fragment.glsl'
 
-
-function hideSpinner() {
-    document.getElementById('loader').style.display = 'none';
-}
-
-window.onload = hideSpinner()
-
 const canvasContainer = document.querySelector('#canvasContainer')
 const scene = new THREE.Scene()
 const camera = new THREE.PerspectiveCamera(
@@ -328,6 +321,10 @@ function animate() {
     group.rotation.y += 0.0002
 
     raycaster.setFromCamera(mouse, camera)
+
+    gsap.set(popUpEl, {
+        display: 'none'
+    })
 
     const intersects1 = raycaster.intersectObjects(AIEd.children.filter(mesh => {
         return mesh.geometry.type === "BoxGeometry"

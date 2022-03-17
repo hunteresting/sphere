@@ -19,51 +19,6 @@
         #popUpEl {
             display: none;
         }
-        
-        #loaderbox {
-            display: inline-block;
-            width: 100%;
-            height: 100vh;
-            justify-content: center;
-            position: relative background-color: black
-        }
-        
-        #loader {
-            width: 8px;
-            height: 48px;
-            position: absolute;
-            top: 50%;
-            left: 46%;
-            transform: translate(-50%, -50%);
-            border-radius: 4px;
-            z-index: 100;
-            -webkit-animation: animloader63 1s linear infinite alternate;
-            animation: animloader63 1s linear infinite alternate;
-        }
-        
-        @-webkit-keyframes animloader63 {
-            0% {
-                box-shadow: 20px 0 rgba(255, 255, 255, 0.25), 40px 0 white, 60px 0 white;
-            }
-            50% {
-                box-shadow: 20px 0 white, 40px 0 rgba(255, 255, 255, 0.25), 60px 0 white;
-            }
-            100% {
-                box-shadow: 20px 0 white, 40px 0 white, 60px 0 rgba(255, 255, 255, 0.25);
-            }
-        }
-        
-        @keyframes animloader63 {
-            0% {
-                box-shadow: 20px 0 rgba(255, 255, 255, 0.25), 40px 0 white, 60px 0 white;
-            }
-            50% {
-                box-shadow: 20px 0 white, 40px 0 rgba(255, 255, 255, 0.25), 60px 0 white;
-            }
-            100% {
-                box-shadow: 20px 0 white, 40px 0 white, 60px 0 rgba(255, 255, 255, 0.25);
-            }
-        }
     </style>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.tailwindcss.com"></script>
@@ -72,9 +27,6 @@
 
 <body>
     <div class="flex">
-        <div id="loaderbox">
-            <div id="loader"> </div>
-        </div>
         <div class="container absolute">
             <div class="absolute" id="textbox">
                 <div class="block">
