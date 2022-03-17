@@ -4,6 +4,7 @@ import * as THREE from 'three'
 import { Lensflare, LensflareElement } from './flare.js';
 import vertexShader from './shaders/vertex.glsl'
 import fragmentShader from './shaders/fragment.glsl'
+import { Group } from 'three';
 
 const canvasContainer = document.querySelector('#canvasContainer')
 const scene = new THREE.Scene()
@@ -67,6 +68,7 @@ const light = new THREE.Light(0xffffff, 1.5, 2000);
 light.color.setHSL(0.995, 0.5, 0.9);
 
 const textureLoader = new THREE.TextureLoader();
+const textureFlare0 = textureLoader.load('./img/lensflare0.png');
 const textureFlare3 = textureLoader.load('./img/lensflare3.png');
 
 
@@ -154,7 +156,7 @@ function createdots(lat, lng) {
     dot.position.y = y
 
     dot.lookAt(0, 0, 0)
-    dot.geometry.applyMatrix4(new THREE.Matrix4().makeTranslation(0, 0, -0.4))
+    dot.geometry.applyMatrix4(new THREE.Matrix4().makeTranslation(0, 0, -0.2))
 
     group.add(dot)
 }
@@ -167,8 +169,10 @@ for (let i = 0; i < 1000; i++) {
 
 }
 
+const boxes = new THREE.Group
 const NLP = new THREE.Group()
 group.add(NLP)
+group.add(boxes)
 
 function createBlue(lat, lng, papername, contents) {
     const box = new THREE.Mesh(
@@ -195,7 +199,6 @@ function createBlue(lat, lng, papername, contents) {
     box.position.y = y
 
     box.lookAt(0, 0, 0)
-
     NLP.add(box)
 
     box.papername = papername
@@ -237,7 +240,6 @@ function createblue2(lat, lng, papername, contents) {
     box.position.y = y
 
     box.lookAt(0, 0, 0)
-
     CV.add(box)
 
     box.papername = papername
@@ -254,6 +256,7 @@ for (let i = 0; i < 50; i++) {
 
 const AIEd = new THREE.Group()
 group.add(AIEd)
+
 
 function createblue3(lat, lng, papername, contents) {
     const box = new THREE.Mesh(
@@ -280,7 +283,6 @@ function createblue3(lat, lng, papername, contents) {
     box.position.y = y
 
     box.lookAt(0, 0, 0)
-
     AIEd.add(box)
 
     box.papername = papername
@@ -322,49 +324,17 @@ function animate() {
 
     raycaster.setFromCamera(mouse, camera)
 
+    const intersects = raycaster.intersectObjects(boxes.children.filter(mesh => {
+        return mesh.geometry.type === "BoxGeometry"
+    }))
+
     gsap.set(popUpEl, {
         display: 'none'
     })
 
-    const intersects1 = raycaster.intersectObjects(AIEd.children.filter(mesh => {
-        return mesh.geometry.type === "BoxGeometry"
-    }))
+    for (let i = 0; i < intersects.length; i++) {
 
-    const intersects2 = raycaster.intersectObjects(NLP.children.filter(mesh => {
-        return mesh.geometry.type === "BoxGeometry"
-    }))
-
-    const intersects3 = raycaster.intersectObjects(CV.children.filter(mesh => {
-        return mesh.geometry.type === "BoxGeometry"
-    }))
-
-    for (let i = 0; i < intersects1.length; i++) {
-
-        const box = intersects1[i].object
-
-        gsap.set(popUpEl, {
-            display: 'block'
-        })
-
-        headEl.innerHTML = box.papername
-        conEl.innerHTML = box.contents
-    }
-
-    for (let i = 0; i < intersects2.length; i++) {
-
-        const box = intersects2[i].object
-
-        gsap.set(popUpEl, {
-            display: 'block'
-        })
-
-        headEl.innerHTML = box.papername
-        conEl.innerHTML = box.contents
-    }
-
-    for (let i = 0; i < intersects3.length; i++) {
-
-        const box = intersects3[i].object
+        const box = intersects[i].object
 
         gsap.set(popUpEl, {
             display: 'block'
@@ -408,7 +378,7 @@ addEventListener('mousemove', (event) => {
     }
 })
 
-addEventListener('mouseup', (event) => {
+addEventListener('mouseup', () => {
     mouse.down = false
 })
 
@@ -473,119 +443,150 @@ const line2 = new THREE.Line(geometry2, material2);
 const geometry3 = new THREE.BufferGeometry().setFromPoints(CVpoints);
 const line3 = new THREE.Line(geometry3, material3);
 
-scene.add(line1);
-scene.add(line2);
-scene.add(line3);
+scene.add(line1)
+scene.add(line2)
+scene.add(line3)
 group.add(line1)
 group.add(line2)
 group.add(line3)
 
-const checkboxAIEd = document.getElementById("AIEd")
-const checkboxNLP = document.getElementById("NLP")
-const checkboxCV = document.getElementById("CV")
+const AIEdblock = document.getElementById("AIEd")
+const AIEdbox = document.getElementById("AIEdbox")
+const AIEdp = document.getElementById("AIEdp")
+const NLPblock = document.getElementById("NLP")
+const NLPbox = document.getElementById("NLPbox")
+const NLPp = document.getElementById("NLPp")
+const CVblock = document.getElementById("CV")
+const CVbox = document.getElementById("CVbox")
+const CVp = document.getElementById("CVp")
+const Allblock = document.getElementById("All")
+const Allbox = document.getElementById("Allbox")
+const Allp = document.getElementById("Allp")
 
-checkboxAIEd.addEventListener('change', function() {
-    if (this.checked) {
-        for (let i = 0; i < NLP.children.length; i++) {
-            const box = NLP.children[i]
+
+AIEdblock.addEventListener('click', () => {
+    for (let i = 0; i < AIEd.children.length; i++) {
+        const box = AIEd.children[i]
+        if (box.material.opacity = 0.2) {
+            box.material.opacity = 1
+        } else {
             box.material.opacity = 0.2
         }
-        for (let i = 0; i < CV.children.length; i++) {
-            const box = CV.children[i]
-            box.material.opacity = 0.2
-        }
-        line1.material.opacity = 0.3
-        line2.material.opacity = 0.1
-        line3.material.opacity = 0.1
-
-        checkboxNLP.disabled = true
-        checkboxCV.disabled = true
-
-    } else {
-        for (let i = 0; i < NLP.children.length; i++) {
-            const box = NLP.children[i]
-            box.material.opacity = 1
-        }
-        for (let i = 0; i < CV.children.length; i++) {
-            const box = CV.children[i]
-            box.material.opacity = 1
-        }
-        line1.material.opacity = 0.2
-        line2.material.opacity = 0.2
-        line3.material.opacity = 0.2
-
-        checkboxNLP.disabled = false
-        checkboxCV.disabled = false
     }
+    for (let i = 0; i < NLP.children.length; i++) {
+        const box = NLP.children[i]
+        box.material.opacity = 0.2
+    }
+    for (let i = 0; i < CV.children.length; i++) {
+        const box = CV.children[i]
+        box.material.opacity = 0.2
+    }
+    line1.material.opacity = 0.3
+    line2.material.opacity = 0.1
+    line3.material.opacity = 0.1
+
+    Allbox.setAttribute("id", "Allboxc")
+    Allp.setAttribute("id", "Allpc")
+    AIEdbox.setAttribute("id", "AIEdbox")
+    AIEdp.setAttribute("id", "AIEdp")
+    NLPbox.setAttribute("id", "NLPboxc")
+    NLPp.setAttribute("id", "NLPpc")
+    CVbox.setAttribute("id", "CVboxc")
+    CVp.setAttribute("id", "CVpc")
+
 });
 
-checkboxNLP.addEventListener('change', function() {
-    if (this.checked) {
-        for (let i = 0; i < AIEd.children.length; i++) {
-            const box = AIEd.children[i]
-            box.material.opacity = 0.2
-        }
-        for (let i = 0; i < CV.children.length; i++) {
-            const box = CV.children[i]
-            box.material.opacity = 0.2
-        }
-        line1.material.opacity = 0.1
-        line2.material.opacity = 0.3
-        line3.material.opacity = 0.1
-
-        checkboxAIEd.disabled = true
-        checkboxCV.disabled = true
-
-    } else {
-        for (let i = 0; i < AIEd.children.length; i++) {
-            const box = AIEd.children[i]
-            box.material.opacity = 1
-        }
-        for (let i = 0; i < CV.children.length; i++) {
-            const box = CV.children[i]
-            box.material.opacity = 1
-        }
-        line1.material.opacity = 0.2
-        line2.material.opacity = 0.2
-        line3.material.opacity = 0.2
-
-        checkboxAIEd.disabled = false
-        checkboxCV.disabled = false
+NLPblock.addEventListener('click', () => {
+    for (let i = 0; i < AIEd.children.length; i++) {
+        const box = AIEd.children[i]
+        box.material.opacity = 0.2
     }
+    for (let i = 0; i < NLP.children.length; i++) {
+        const box = NLP.children[i]
+        if (box.material.opacity = 0.2) {
+            box.material.opacity = 1
+        } else {
+            box.material.opacity = 0.2
+        }
+    }
+    for (let i = 0; i < CV.children.length; i++) {
+        const box = CV.children[i]
+        box.material.opacity = 0.2
+    }
+    line1.material.opacity = 0.1
+    line2.material.opacity = 0.3
+    line3.material.opacity = 0.1
+
+    Allbox.setAttribute("id", "Allboxc")
+    Allp.setAttribute("id", "Allpc")
+    AIEdbox.setAttribute("id", "AIEdboxc")
+    AIEdp.setAttribute("id", "AIEdpc")
+    NLPbox.setAttribute("id", "NLPbox")
+    NLPp.setAttribute("id", "NLPp")
+    CVbox.setAttribute("id", "CVboxc")
+    CVp.setAttribute("id", "CVpc")
 });
 
-checkboxCV.addEventListener('change', function() {
-    if (this.checked) {
-        for (let i = 0; i < NLP.children.length; i++) {
-            const box = NLP.children[i]
-            box.material.opacity = 0.2
-        }
-        for (let i = 0; i < AIEd.children.length; i++) {
-            const box = AIEd.children[i]
-            box.material.opacity = 0.2
-        }
-        line1.material.opacity = 0.1
-        line2.material.opacity = 0.1
-        line3.material.opacity = 0.3
-
-        checkboxAIEd.disabled = true
-        checkboxNLP.disabled = true
-
-
-    } else {
-        for (let i = 0; i < NLP.children.length; i++) {
-            const box = NLP.children[i]
-            box.material.opacity = 1
-        }
-        for (let i = 0; i < AIEd.children.length; i++) {
-            const box = AIEd.children[i]
-            box.material.opacity = 1
-        }
-        line1.material.opacity = 0.2
-        line2.material.opacity = 0.2
-        line3.material.opacity = 0.2
-
-        checkboxAIEd.disabled = false
-        checkboxNLP.disabled = false
+CVblock.addEventListener('click', () => {
+    for (let i = 0; i < AIEd.children.length; i++) {
+        const box = AIEd.children[i]
+        box.material.opacity = 0.2
     }
+    for (let i = 0; i < NLP.children.length; i++) {
+        const box = NLP.children[i]
+        box.material.opacity = 0.2
+    }
+    for (let i = 0; i < CV.children.length; i++) {
+        const box = CV.children[i]
+        if (box.material.opacity = 0.2) {
+            box.material.opacity = 1
+        } else {
+            box.material.opacity = 0.2
+        }
+    }
+    line1.material.opacity = 0.1
+    line2.material.opacity = 0.1
+    line3.material.opacity = 0.3
+
+    Allbox.setAttribute("id", "Allboxc")
+    Allp.setAttribute("id", "Allpc")
+    AIEdbox.setAttribute("id", "AIEdboxc")
+    AIEdp.setAttribute("id", "AIEdpc")
+    NLPbox.setAttribute("id", "NLPboxc")
+    NLPp.setAttribute("id", "NLPpc")
+    CVbox.setAttribute("id", "CVbox")
+    CVp.setAttribute("id", "CVp")
 });
+
+Allblock.addEventListener('click', () => {
+    for (let i = 0; i < AIEd.children.length; i++) {
+        const box = AIEd.children[i]
+        box.material.opacity = 1
+    }
+    for (let i = 0; i < NLP.children.length; i++) {
+        const box = NLP.children[i]
+        box.material.opacity = 1
+    }
+    for (let i = 0; i < CV.children.length; i++) {
+        const box = CV.children[i]
+        box.material.opacity = 1
+    }
+    line1.material.opacity = 0.3
+    line2.material.opacity = 0.3
+    line3.material.opacity = 0.3
+
+    Allbox.setAttribute("id", "Allbox")
+    Allp.setAttribute("id", "Allp")
+    AIEdbox.setAttribute("id", "AIEdbox")
+    AIEdp.setAttribute("id", "AIEdp")
+    NLPbox.setAttribute("id", "NLPbox")
+    NLPp.setAttribute("id", "NLPp")
+    CVbox.setAttribute("id", "CVbox")
+    CVp.setAttribute("id", "CVp")
+});
+
+AIEd.children.forEach(element => {
+    element.addEventListener('click', () => {
+        console.log(element)
+    })
+})
