@@ -4,7 +4,13 @@ import * as THREE from 'three'
 import { Lensflare, LensflareElement } from './flare.js';
 import vertexShader from './shaders/vertex.glsl'
 import fragmentShader from './shaders/fragment.glsl'
-import atmosphereVertexShader from './shaders/atmosphereVertex.glsl'
+
+
+function hideSpinner() {
+    document.getElementById('loader').style.display = 'none';
+}
+
+window.onload = hideSpinner()
 
 const canvasContainer = document.querySelector('#canvasContainer')
 const scene = new THREE.Scene()
@@ -335,10 +341,6 @@ function animate() {
         return mesh.geometry.type === "BoxGeometry"
     }))
 
-    gsap.set(popUpEl, {
-        display: 'none'
-    })
-
     for (let i = 0; i < intersects1.length; i++) {
 
         const box = intersects1[i].object
@@ -499,6 +501,9 @@ checkboxAIEd.addEventListener('change', function() {
         line2.material.opacity = 0.1
         line3.material.opacity = 0.1
 
+        checkboxNLP.disabled = true
+        checkboxCV.disabled = true
+
     } else {
         for (let i = 0; i < NLP.children.length; i++) {
             const box = NLP.children[i]
@@ -511,6 +516,9 @@ checkboxAIEd.addEventListener('change', function() {
         line1.material.opacity = 0.2
         line2.material.opacity = 0.2
         line3.material.opacity = 0.2
+
+        checkboxNLP.disabled = false
+        checkboxCV.disabled = false
     }
 });
 
@@ -527,6 +535,10 @@ checkboxNLP.addEventListener('change', function() {
         line1.material.opacity = 0.1
         line2.material.opacity = 0.3
         line3.material.opacity = 0.1
+
+        checkboxAIEd.disabled = true
+        checkboxCV.disabled = true
+
     } else {
         for (let i = 0; i < AIEd.children.length; i++) {
             const box = AIEd.children[i]
@@ -539,6 +551,9 @@ checkboxNLP.addEventListener('change', function() {
         line1.material.opacity = 0.2
         line2.material.opacity = 0.2
         line3.material.opacity = 0.2
+
+        checkboxAIEd.disabled = false
+        checkboxCV.disabled = false
     }
 });
 
@@ -555,6 +570,11 @@ checkboxCV.addEventListener('change', function() {
         line1.material.opacity = 0.1
         line2.material.opacity = 0.1
         line3.material.opacity = 0.3
+
+        checkboxAIEd.disabled = true
+        checkboxNLP.disabled = true
+
+
     } else {
         for (let i = 0; i < NLP.children.length; i++) {
             const box = NLP.children[i]
@@ -567,5 +587,8 @@ checkboxCV.addEventListener('change', function() {
         line1.material.opacity = 0.2
         line2.material.opacity = 0.2
         line3.material.opacity = 0.2
+
+        checkboxAIEd.disabled = false
+        checkboxNLP.disabled = false
     }
 });
