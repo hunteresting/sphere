@@ -196,7 +196,6 @@ function createBlue(lat, lng, papername, contents) {
     box.position.y = y
 
     box.lookAt(0, 0, 0)
-    box.geometry.applyMatrix4(new THREE.Matrix4().makeTranslation(0, 0, -0.4))
 
     NLP.add(box)
 
@@ -239,7 +238,6 @@ function createblue2(lat, lng, papername, contents) {
     box.position.y = y
 
     box.lookAt(0, 0, 0)
-    box.geometry.applyMatrix4(new THREE.Matrix4().makeTranslation(0, 0, -0.4))
 
     CV.add(box)
 
@@ -271,7 +269,7 @@ function createblue3(lat, lng, papername, contents) {
 
     const latitude = (lat / 180) * Math.PI
     const longitude = (lng / 180) * Math.PI
-    const radius = 4.7
+    const radius = 5
 
     const x = radius * Math.cos(latitude) * Math.sin(longitude)
     const y = radius * Math.sin(latitude)
@@ -283,7 +281,6 @@ function createblue3(lat, lng, papername, contents) {
     box.position.y = y
 
     box.lookAt(0, 0, 0)
-    box.geometry.applyMatrix4(new THREE.Matrix4().makeTranslation(0, 0, -0.4))
 
     AIEd.add(box)
 
@@ -416,12 +413,30 @@ addEventListener('mouseup', (event) => {
     mouse.down = false
 })
 
-const shaderMaterial = new THREE.ShaderMaterial({
-    vertexShader: atmosphereVertexShader,
-    fragmentShader
-})
+const material1 = new THREE.LineBasicMaterial({
+    color: 0xffffff,
+    transparent: true,
+    opacity: 0.2,
+    alphaTest: 1
+});
 
-const points = [];
+const material2 = new THREE.LineBasicMaterial({
+    color: 0xffffff,
+    transparent: true,
+    opacity: 0.2,
+    alphaTest: 1
+});
+
+const material3 = new THREE.LineBasicMaterial({
+    color: 0xffffff,
+    transparent: true,
+    opacity: 0.2,
+    alphaTest: 1
+});
+
+const AIEdpoints = [];
+const NLPpoints = [];
+const CVpoints = [];
 
 const AIEddot = AIEd.children.filter(mesh => {
     return mesh.geometry.type === "BoxGeometry"
@@ -437,35 +452,120 @@ const CVdot = CV.children.filter(mesh => {
 
 for (let i = 0; i < AIEddot.length; i++) {
     const box = AIEddot[i]
-    points.push(new THREE.Vector3(box.position.x, box.position.y, box.position.z));
+    AIEdpoints.push(new THREE.Vector3(box.position.x, box.position.y, box.position.z));
 }
 
 for (let i = 0; i < NLPdot.length; i++) {
     const box = NLPdot[i]
-    points.push(new THREE.Vector3(box.position.x, box.position.y, box.position.z));
+    NLPpoints.push(new THREE.Vector3(box.position.x, box.position.y, box.position.z));
 }
 
-for (let i = 0; i < AIEddot.length; i++) {
-    const box = AIEddot[i]
-    points.push(new THREE.Vector3(box.position.x, box.position.y, box.position.z));
+for (let i = 0; i < CVdot.length; i++) {
+    const box = CVdot[i]
+    CVpoints.push(new THREE.Vector3(box.position.x, box.position.y, box.position.z));
 }
 
-const geometry = new THREE.BufferGeometry().setFromPoints(points);
-const line = new THREE.Line(geometry, shaderMaterial);
+const geometry1 = new THREE.BufferGeometry().setFromPoints(AIEdpoints);
+const line1 = new THREE.Line(geometry1, material1);
 
-scene.add(line);
-group.add(line)
+const geometry2 = new THREE.BufferGeometry().setFromPoints(NLPpoints);
+const line2 = new THREE.Line(geometry2, material2);
+
+const geometry3 = new THREE.BufferGeometry().setFromPoints(CVpoints);
+const line3 = new THREE.Line(geometry3, material3);
+
+scene.add(line1);
+scene.add(line2);
+scene.add(line3);
+group.add(line1)
+group.add(line2)
+group.add(line3)
 
 const checkboxAIEd = document.getElementById("AIEd")
 const checkboxNLP = document.getElementById("NLP")
 const checkboxCV = document.getElementById("CV")
 
-console.log(NLP)
-
 checkboxAIEd.addEventListener('change', function() {
     if (this.checked) {
-        console.log("Checkbox is checked..");
+        for (let i = 0; i < NLP.children.length; i++) {
+            const box = NLP.children[i]
+            box.material.opacity = 0.2
+        }
+        for (let i = 0; i < CV.children.length; i++) {
+            const box = CV.children[i]
+            box.material.opacity = 0.2
+        }
+        line1.material.opacity = 0.3
+        line2.material.opacity = 0.1
+        line3.material.opacity = 0.1
+
     } else {
-        console.log("Checkbox is not checked..");
+        for (let i = 0; i < NLP.children.length; i++) {
+            const box = NLP.children[i]
+            box.material.opacity = 1
+        }
+        for (let i = 0; i < CV.children.length; i++) {
+            const box = CV.children[i]
+            box.material.opacity = 1
+        }
+        line1.material.opacity = 0.2
+        line2.material.opacity = 0.2
+        line3.material.opacity = 0.2
+    }
+});
+
+checkboxNLP.addEventListener('change', function() {
+    if (this.checked) {
+        for (let i = 0; i < AIEd.children.length; i++) {
+            const box = AIEd.children[i]
+            box.material.opacity = 0.2
+        }
+        for (let i = 0; i < CV.children.length; i++) {
+            const box = CV.children[i]
+            box.material.opacity = 0.2
+        }
+        line1.material.opacity = 0.1
+        line2.material.opacity = 0.3
+        line3.material.opacity = 0.1
+    } else {
+        for (let i = 0; i < AIEd.children.length; i++) {
+            const box = AIEd.children[i]
+            box.material.opacity = 1
+        }
+        for (let i = 0; i < CV.children.length; i++) {
+            const box = CV.children[i]
+            box.material.opacity = 1
+        }
+        line1.material.opacity = 0.2
+        line2.material.opacity = 0.2
+        line3.material.opacity = 0.2
+    }
+});
+
+checkboxCV.addEventListener('change', function() {
+    if (this.checked) {
+        for (let i = 0; i < NLP.children.length; i++) {
+            const box = NLP.children[i]
+            box.material.opacity = 0.2
+        }
+        for (let i = 0; i < AIEd.children.length; i++) {
+            const box = AIEd.children[i]
+            box.material.opacity = 0.2
+        }
+        line1.material.opacity = 0.1
+        line2.material.opacity = 0.1
+        line3.material.opacity = 0.3
+    } else {
+        for (let i = 0; i < NLP.children.length; i++) {
+            const box = NLP.children[i]
+            box.material.opacity = 1
+        }
+        for (let i = 0; i < AIEd.children.length; i++) {
+            const box = AIEd.children[i]
+            box.material.opacity = 1
+        }
+        line1.material.opacity = 0.2
+        line2.material.opacity = 0.2
+        line3.material.opacity = 0.2
     }
 });
