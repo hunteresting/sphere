@@ -2,9 +2,13 @@ import gsap from 'gsap'
 import * as THREE from 'three'
 
 import { Lensflare, LensflareElement } from './flare.js';
+import { EffectComposer } from "./EffectComposer.js";
+import { RenderPass } from "./RenderPass.js";
+import { ShaderPass } from "./ShaderPass.js";
+import { UnrealBloomPass } from "./UnrealBloomPass.js";
 import vertexShader from './shaders/vertex.glsl'
 import fragmentShader from './shaders/fragment.glsl'
-import { Group } from 'three';
+
 
 const canvasContainer = document.querySelector('#canvasContainer')
 const scene = new THREE.Scene()
@@ -68,7 +72,6 @@ const light = new THREE.Light(0xffffff, 1.5, 2000);
 light.color.setHSL(0.995, 0.5, 0.9);
 
 const textureLoader = new THREE.TextureLoader();
-const textureFlare0 = textureLoader.load('./img/lensflare0.png');
 const textureFlare3 = textureLoader.load('./img/lensflare3.png');
 
 
@@ -206,7 +209,7 @@ function createBlue(lat, lng, papername, contents) {
 }
 
 
-for (let i = 0; i < 50; i++) {
+for (let i = 0; i < 70; i++) {
     var a = getRandomNumber(-90, 90)
     var b = getRandomNumber(-180, 180)
     createBlue(a.real, b.real, 'Classification', 'Headline')
@@ -247,7 +250,7 @@ function createblue2(lat, lng, papername, contents) {
 }
 
 
-for (let i = 0; i < 50; i++) {
+for (let i = 0; i < 70; i++) {
     var a = getRandomNumber(-90, 90)
     var b = getRandomNumber(-180, 180)
     createblue2(a.real, b.real, 'Classification', 'Headline')
@@ -290,7 +293,7 @@ function createblue3(lat, lng, papername, contents) {
 }
 
 
-for (let i = 0; i < 50; i++) {
+for (let i = 0; i < 70; i++) {
     var a = getRandomNumber(-90, 90)
     var b = getRandomNumber(-180, 180)
     createblue3(a.real, b.real, 'Classification', 'Headline')
@@ -324,7 +327,13 @@ function animate() {
 
     raycaster.setFromCamera(mouse, camera)
 
-    const intersects = raycaster.intersectObjects(boxes.children.filter(mesh => {
+    const intersects1 = raycaster.intersectObjects(AIEd.children.filter(mesh => {
+        return mesh.geometry.type === "BoxGeometry"
+    }))
+    const intersects2 = raycaster.intersectObjects(NLP.children.filter(mesh => {
+        return mesh.geometry.type === "BoxGeometry"
+    }))
+    const intersects3 = raycaster.intersectObjects(CV.children.filter(mesh => {
         return mesh.geometry.type === "BoxGeometry"
     }))
 
@@ -332,9 +341,33 @@ function animate() {
         display: 'none'
     })
 
-    for (let i = 0; i < intersects.length; i++) {
+    for (let i = 0; i < intersects1.length; i++) {
 
-        const box = intersects[i].object
+        const box = intersects1[i].object
+
+        gsap.set(popUpEl, {
+            display: 'block'
+        })
+
+        headEl.innerHTML = box.papername
+        conEl.innerHTML = box.contents
+    }
+
+    for (let i = 0; i < intersects2.length; i++) {
+
+        const box = intersects2[i].object
+
+        gsap.set(popUpEl, {
+            display: 'block'
+        })
+
+        headEl.innerHTML = box.papername
+        conEl.innerHTML = box.contents
+    }
+
+    for (let i = 0; i < intersects3.length; i++) {
+
+        const box = intersects3[i].object
 
         gsap.set(popUpEl, {
             display: 'block'
@@ -358,8 +391,16 @@ canvasContainer.addEventListener('mousedown', ({ clientX, clientY }) => {
 
 addEventListener('mousemove', (event) => {
 
-    mouse.x = ((event.clientX - innerWidth / 2) / innerWidth) * 2
-    mouse.y = -(event.clientY / innerHeight) * 2 + 1
+
+    if (innerWidth >= 1280) {
+        mouse.x = ((event.clientX - innerWidth / 2) / innerWidth) * 2
+        mouse.y = -(event.clientY / innerHeight) * 2 + 1
+    } else {
+        const offset = canvasContainer.getBoundingClientRect().top
+        mouse.x = (event.clientX / innerWidth) * 2 - 1
+        mouse.y = -((event.clientY - offset) / innerHeight) * 2 + 1
+        console.log(mouse.y)
+    }
 
     gsap.set(popUpEl, {
         x: event.clientX,
@@ -585,8 +626,40 @@ Allblock.addEventListener('click', () => {
     CVp.setAttribute("id", "CVp")
 });
 
+
+
+var scene2 = new THREE.Scene();
+
+var renderer2 = new THREE.WebGLRenderer({ antialias: true });
+renderer2.autoClear = false;
+renderer2.setSize(window.innerWidth, window.innerHeight);
+renderer2.setClearColor(0x101000);
+document.body.appendChild(renderer2.domElement)
+
 AIEd.children.forEach(element => {
-    element.addEventListener('click', () => {
-        console.log(element)
+    element.addEventListener("click", () => {
+        scene2.add(element);
+
+        renderScene = new THREE.RenderPass(scene2, camera);
+        bloomPass = new THREE.UnrealBloomPass(
+            new THREE.Vector2(window.innerWidth, window.innerHeight),
+            1.5,
+            0.4,
+            0.85
+        );
+        bloomPass.threshold = 0.21;
+        bloomPass.strength = 1.5;
+        bloomPass.radius = 0.65;
+        bloomPass.renderToScreen = true;
+
+        composer = new THREE.EffectComposer(renderer);
+        composer.setSize(window.innerWidth, window.innerHeight);
+
+        composer.addPass(renderScene);
+        composer.addPass(bloomPass);
+
+        renderer2.clear();
+        composer.render();
+        renderer2.render(scene2, camera);
     })
 })
