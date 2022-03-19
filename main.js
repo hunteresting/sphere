@@ -1,6 +1,5 @@
 import gsap from 'gsap'
 import * as THREE from 'three'
-import * as TWEEN from 'tween'
 import { Lensflare, LensflareElement } from './flare.js';
 import vertexShader from './shaders/vertex.glsl'
 import fragmentShader from './shaders/fragment.glsl'
@@ -192,7 +191,6 @@ function createBlue(lat, lng, classification, title, text) {
     const y = radius * Math.sin(latitude)
     const z = radius * Math.cos(latitude) * Math.cos(longitude)
 
-
     box.position.z = z
     box.position.x = x
     box.position.y = y
@@ -203,12 +201,12 @@ function createBlue(lat, lng, classification, title, text) {
     box.classification = classification
     box.title = title
     box.text = text
-    box.longitude = longitude
-    box.latitude = latitude
+    box.longitude = lat
+    box.latitude = lng
 }
 
 
-for (let i = 0; i < 70; i++) {
+for (let i = 0; i < 1; i++) {
     var a = getRandomNumber(-90, 90)
     var b = getRandomNumber(-180, 180)
     createBlue(a.real, b.real, 'Classification', 'Headline', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.')
@@ -247,12 +245,12 @@ function createblue2(lat, lng, classification, title, text) {
     box.classification = classification
     box.title = title
     box.text = text
-    box.longitude = longitude
-    box.latitude = latitude
+    box.longitude = lat
+    box.latitude = lng
 }
 
 
-for (let i = 0; i < 70; i++) {
+for (let i = 0; i < 1; i++) {
     var a = getRandomNumber(-90, 90)
     var b = getRandomNumber(-180, 180)
     createblue2(a.real, b.real, 'Classification', 'Headline', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.')
@@ -293,15 +291,15 @@ function createblue3(lat, lng, classification, title, text) {
     box.classification = classification
     box.title = title
     box.text = text
-    box.longitude = longitude
-    box.latitude = latitude
+    box.longitude = lat
+    box.latitude = lng
 }
 
 
-for (let i = 0; i < 70; i++) {
+for (let i = 0; i < 1; i++) {
     var a = getRandomNumber(-90, 90)
     var b = getRandomNumber(-180, 180)
-    createblue3(a.real, b.real, 'Classification', 'Headline', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.')
+    createblue3(0, 0, 'Classification', 'Headline', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.')
 
 }
 
@@ -320,21 +318,18 @@ const mouse = {
     yPrev: undefined
 }
 
-const raycaster = new THREE.Raycaster();
 const popUpEl = document.getElementById('popUpEl')
 const classificationEL = document.getElementById('classEl')
 const titleEl = document.getElementById('titleEl')
 const textEl = document.getElementById('textEl')
 const close = document.getElementById('close')
 
-
-
-
 function animate() {
     requestAnimationFrame(animate)
     renderer.render(scene, camera)
-    group.rotation.y += 0.0002
-
+    if (!stopstate) {
+        group.rotation.y += 0.0003
+    }
 }
 
 animate()
@@ -570,6 +565,8 @@ Allblock.addEventListener('click', () => {
     CVp.setAttribute("id", "CVp")
 });
 
+var stopstate = false
+
 window.addEventListener('click', boxClick, false);
 
 var raycaster2 = new THREE.Raycaster();
@@ -618,6 +615,12 @@ function boxClick(event) {
             display: 'block'
         })
 
+        stopstate = true
+
+        group.rotation.x = -box.latitude * Math.PI
+        group.rotation.y = -box.longitude * Math.PI
+
+
         classificationEL.innerHTML = box.classification
         titleEl.innerHTML = box.title
         textEl.innerHTML = box.text
@@ -626,7 +629,7 @@ function boxClick(event) {
             gsap.set(popUpEl, {
                 display: 'None'
             })
-
+            stopstate = false
         })
     }
 
@@ -663,6 +666,12 @@ function boxClick(event) {
             display: 'block'
         })
 
+        stopstate = true
+
+        group.rotation.x = -box.latitude * Math.PI
+        group.rotation.y = -box.longitude * Math.PI
+
+
         classificationEL.innerHTML = box.classification
         titleEl.innerHTML = box.title
         textEl.innerHTML = box.text
@@ -671,6 +680,7 @@ function boxClick(event) {
             gsap.set(popUpEl, {
                 display: 'None'
             })
+            stopstate = false
         })
 
     }
@@ -708,6 +718,10 @@ function boxClick(event) {
             display: 'block'
         })
 
+        stopstate = true
+        group.rotation.x = -box.latitude * Math.PI
+        group.rotation.y = -box.longitude * Math.PI
+
         classificationEL.innerHTML = box.classification
         titleEl.innerHTML = box.title
         textEl.innerHTML = box.text
@@ -716,6 +730,8 @@ function boxClick(event) {
             gsap.set(popUpEl, {
                 display: 'None'
             })
+            stopstate = false
+            console.log(stopstate)
         })
 
     }
