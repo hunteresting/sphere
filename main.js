@@ -3,8 +3,6 @@ import * as THREE from 'three'
 import { Lensflare, LensflareElement } from './flare.js';
 import vertexShader from './shaders/vertex.glsl'
 import fragmentShader from './shaders/fragment.glsl'
-import atmosphereVertexShader from './shaders/atmosphereVertex.glsl'
-import atmosphereFragmentShader from './shaders/atmosphereFragment.glsl'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass'
@@ -371,25 +369,32 @@ function animate() {
 
     for (let i = 0; i < intersects1.length; i++) {
         const box = intersects1[i].object
-        gsap.set(thumbnail, {
-            display: 'block'
-        })
+
+        if (!stopstate) {
+            gsap.set(thumbnail, {
+                display: 'block'
+            })
+        }
         thumbnailEl.innerHTML = box.thumbnail
     }
 
     for (let i = 0; i < intersects2.length; i++) {
         const box = intersects2[i].object
-        gsap.set(thumbnail, {
-            display: 'block'
-        })
+        if (!stopstate) {
+            gsap.set(thumbnail, {
+                display: 'block'
+            })
+        }
         thumbnailEl.innerHTML = box.thumbnail
     }
 
     for (let i = 0; i < intersects3.length; i++) {
         const box = intersects3[i].object
-        gsap.set(thumbnail, {
-            display: 'block'
-        })
+        if (!stopstate) {
+            gsap.set(thumbnail, {
+                display: 'block'
+            })
+        }
         thumbnailEl.innerHTML = box.thumbnail
     }
     renderer.render(scene, camera)
@@ -406,7 +411,7 @@ canvasContainer.addEventListener('mousedown', ({ clientX, clientY }) => {
 
 addEventListener('mousemove', (event) => {
 
-    mouse.x = ((event.clientX - innerWidth / 2) / innerWidth) * 2 + 0.03
+    mouse.x = ((event.clientX - innerWidth / 2) / innerWidth) * 2 - 0.01
     mouse.y = -(event.clientY / innerHeight) * 2 + 1
 
 
@@ -414,6 +419,7 @@ addEventListener('mousemove', (event) => {
         x: event.clientX,
         y: event.clientY
     })
+
 
     if (mouse.down) {
 
@@ -692,9 +698,6 @@ function boxClick(event) {
             display: 'block'
         })
 
-        gsap.set(thumbnail, {
-            display: 'none'
-        })
 
         stopstate = true
 
@@ -704,10 +707,6 @@ function boxClick(event) {
 
         close.addEventListener('click', () => {
             gsap.set(popUpEl, {
-                display: 'None'
-            })
-
-            gsap.set(boxcover, {
                 display: 'None'
             })
 
@@ -771,7 +770,7 @@ function boxClick(event) {
         })
 
         gsap.set(thumbnail, {
-            display: 'none'
+            display: 'None'
         })
 
         stopstate = true
@@ -848,10 +847,6 @@ function boxClick(event) {
             display: 'block'
         })
 
-        gsap.set(thumbnail, {
-            display: 'none'
-        })
-
         stopstate = true
 
         gsap.to(group.rotation, 1, { x: box.longitude * (Math.PI / 180) });
@@ -864,9 +859,11 @@ function boxClick(event) {
         textEl.innerHTML = box.text
 
         close.addEventListener('click', () => {
+
             gsap.set(popUpEl, {
                 display: 'None'
             })
+
             stopstate = false
             gsap.to(camera.position, 1, { z: 10 });
 
