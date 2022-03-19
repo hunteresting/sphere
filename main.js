@@ -1,11 +1,7 @@
 import gsap from 'gsap'
 import * as THREE from 'three'
-
+import * as TWEEN from 'tween'
 import { Lensflare, LensflareElement } from './flare.js';
-import { EffectComposer } from "./EffectComposer.js";
-import { RenderPass } from "./RenderPass.js";
-import { ShaderPass } from "./ShaderPass.js";
-import { UnrealBloomPass } from "./UnrealBloomPass.js";
 import vertexShader from './shaders/vertex.glsl'
 import fragmentShader from './shaders/fragment.glsl'
 
@@ -177,7 +173,7 @@ const NLP = new THREE.Group()
 group.add(NLP)
 group.add(boxes)
 
-function createBlue(lat, lng, papername, contents) {
+function createBlue(lat, lng, classification, title, text) {
     const box = new THREE.Mesh(
         new THREE.BoxGeometry(0.15, 0.15, 0.15),
         new THREE.MeshBasicMaterial({
@@ -204,22 +200,25 @@ function createBlue(lat, lng, papername, contents) {
     box.lookAt(0, 0, 0)
     NLP.add(box)
 
-    box.papername = papername
-    box.contents = contents
+    box.classification = classification
+    box.title = title
+    box.text = text
+    box.longitude = longitude
+    box.latitude = latitude
 }
 
 
 for (let i = 0; i < 70; i++) {
     var a = getRandomNumber(-90, 90)
     var b = getRandomNumber(-180, 180)
-    createBlue(a.real, b.real, 'Classification', 'Headline')
+    createBlue(a.real, b.real, 'Classification', 'Headline', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.')
 
 }
 
 const CV = new THREE.Group()
 group.add(CV)
 
-function createblue2(lat, lng, papername, contents) {
+function createblue2(lat, lng, classification, title, text) {
     const box = new THREE.Mesh(
         new THREE.BoxGeometry(0.15, 0.15, 0.15),
         new THREE.MeshBasicMaterial({
@@ -245,15 +244,18 @@ function createblue2(lat, lng, papername, contents) {
     box.lookAt(0, 0, 0)
     CV.add(box)
 
-    box.papername = papername
-    box.contents = contents
+    box.classification = classification
+    box.title = title
+    box.text = text
+    box.longitude = longitude
+    box.latitude = latitude
 }
 
 
 for (let i = 0; i < 70; i++) {
     var a = getRandomNumber(-90, 90)
     var b = getRandomNumber(-180, 180)
-    createblue2(a.real, b.real, 'Classification', 'Headline')
+    createblue2(a.real, b.real, 'Classification', 'Headline', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.')
 
 }
 
@@ -261,7 +263,7 @@ const AIEd = new THREE.Group()
 group.add(AIEd)
 
 
-function createblue3(lat, lng, papername, contents) {
+function createblue3(lat, lng, classification, title, text) {
     const box = new THREE.Mesh(
         new THREE.BoxGeometry(0.2, 0.2, 0.2),
         new THREE.MeshBasicMaterial({
@@ -288,15 +290,18 @@ function createblue3(lat, lng, papername, contents) {
     box.lookAt(0, 0, 0)
     AIEd.add(box)
 
-    box.papername = papername
-    box.contents = contents
+    box.classification = classification
+    box.title = title
+    box.text = text
+    box.longitude = longitude
+    box.latitude = latitude
 }
 
 
 for (let i = 0; i < 70; i++) {
     var a = getRandomNumber(-90, 90)
     var b = getRandomNumber(-180, 180)
-    createblue3(a.real, b.real, 'Classification', 'Headline')
+    createblue3(a.real, b.real, 'Classification', 'Headline', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.')
 
 }
 
@@ -316,68 +321,19 @@ const mouse = {
 }
 
 const raycaster = new THREE.Raycaster();
-const popUpEl = document.querySelector('#popUpEl')
-const headEl = document.querySelector('#headEl')
-const conEl = document.querySelector('#conEl')
+const popUpEl = document.getElementById('popUpEl')
+const classificationEL = document.getElementById('classEl')
+const titleEl = document.getElementById('titleEl')
+const textEl = document.getElementById('textEl')
+const close = document.getElementById('close')
+
+
+
 
 function animate() {
     requestAnimationFrame(animate)
     renderer.render(scene, camera)
     group.rotation.y += 0.0002
-
-    raycaster.setFromCamera(mouse, camera)
-
-    const intersects1 = raycaster.intersectObjects(AIEd.children.filter(mesh => {
-        return mesh.geometry.type === "BoxGeometry"
-    }))
-    const intersects2 = raycaster.intersectObjects(NLP.children.filter(mesh => {
-        return mesh.geometry.type === "BoxGeometry"
-    }))
-    const intersects3 = raycaster.intersectObjects(CV.children.filter(mesh => {
-        return mesh.geometry.type === "BoxGeometry"
-    }))
-
-    gsap.set(popUpEl, {
-        display: 'none'
-    })
-
-    for (let i = 0; i < intersects1.length; i++) {
-
-        const box = intersects1[i].object
-
-        gsap.set(popUpEl, {
-            display: 'block'
-        })
-
-        headEl.innerHTML = box.papername
-        conEl.innerHTML = box.contents
-    }
-
-    for (let i = 0; i < intersects2.length; i++) {
-
-        const box = intersects2[i].object
-
-        gsap.set(popUpEl, {
-            display: 'block'
-        })
-
-        headEl.innerHTML = box.papername
-        conEl.innerHTML = box.contents
-    }
-
-    for (let i = 0; i < intersects3.length; i++) {
-
-        const box = intersects3[i].object
-
-        gsap.set(popUpEl, {
-            display: 'block'
-        })
-
-        headEl.innerHTML = box.papername
-        conEl.innerHTML = box.contents
-    }
-
-    renderer.render(scene, camera);
 
 }
 
@@ -389,23 +345,11 @@ canvasContainer.addEventListener('mousedown', ({ clientX, clientY }) => {
     mouse.yPrev = clientY
 })
 
+
 addEventListener('mousemove', (event) => {
 
-
-    if (innerWidth >= 1280) {
-        mouse.x = ((event.clientX - innerWidth / 2) / innerWidth) * 2
-        mouse.y = -(event.clientY / innerHeight) * 2 + 1
-    } else {
-        const offset = canvasContainer.getBoundingClientRect().top
-        mouse.x = (event.clientX / innerWidth) * 2 - 1
-        mouse.y = -((event.clientY - offset) / innerHeight) * 2 + 1
-        console.log(mouse.y)
-    }
-
-    gsap.set(popUpEl, {
-        x: event.clientX,
-        y: event.clientY
-    })
+    mouse.x = ((event.clientX - innerWidth / 2) / innerWidth) * 2 - 0.01
+    mouse.y = -(event.clientY / innerHeight) * 2 + 1
 
     if (mouse.down) {
 
@@ -626,40 +570,153 @@ Allblock.addEventListener('click', () => {
     CVp.setAttribute("id", "CVp")
 });
 
+window.addEventListener('click', boxClick, false);
 
+var raycaster2 = new THREE.Raycaster();
+var mouse2 = new THREE.Vector2();
 
-var scene2 = new THREE.Scene();
+function boxClick(event) {
 
-var renderer2 = new THREE.WebGLRenderer({ antialias: true });
-renderer2.autoClear = false;
-renderer2.setSize(window.innerWidth, window.innerHeight);
-renderer2.setClearColor(0x101000);
-document.body.appendChild(renderer2.domElement)
+    event.preventDefault();
+    mouse2.x = ((event.clientX - renderer.domElement.clientWidth / 2) / renderer.domElement.clientWidth) * 2
+    mouse2.y = -(event.clientY / renderer.domElement.clientHeight) * 2 + 1;
+    raycaster2.setFromCamera(mouse2, camera);
+    var intersects1 = raycaster2.intersectObjects(AIEd.children);
+    var intersects2 = raycaster2.intersectObjects(NLP.children);
+    var intersects3 = raycaster2.intersectObjects(CV.children);
 
-AIEd.children.forEach(element => {
-    element.addEventListener("click", () => {
-        scene2.add(element);
+    for (let i = 0; i < intersects1.length; i++) {
 
-        renderScene = new THREE.RenderPass(scene2, camera);
-        bloomPass = new THREE.UnrealBloomPass(
-            new THREE.Vector2(window.innerWidth, window.innerHeight),
-            1.5,
-            0.4,
-            0.85
-        );
-        bloomPass.threshold = 0.21;
-        bloomPass.strength = 1.5;
-        bloomPass.radius = 0.65;
-        bloomPass.renderToScreen = true;
+        const box = intersects1[i].object
 
-        composer = new THREE.EffectComposer(renderer);
-        composer.setSize(window.innerWidth, window.innerHeight);
+        for (let i = 0; i < AIEd.children.length; i++) {
+            const box = AIEd.children[i]
+            box.material.opacity = 1
+        }
+        for (let i = 0; i < NLP.children.length; i++) {
+            const box = NLP.children[i]
+            box.material.opacity = 1
+        }
+        for (let i = 0; i < CV.children.length; i++) {
+            const box = CV.children[i]
+            box.material.opacity = 1
+        }
+        line1.material.opacity = 0.3
+        line2.material.opacity = 0.3
+        line3.material.opacity = 0.3
 
-        composer.addPass(renderScene);
-        composer.addPass(bloomPass);
+        Allbox.setAttribute("id", "Allbox")
+        Allp.setAttribute("id", "Allp")
+        AIEdbox.setAttribute("id", "AIEdbox")
+        AIEdp.setAttribute("id", "AIEdp")
+        NLPbox.setAttribute("id", "NLPbox")
+        NLPp.setAttribute("id", "NLPp")
+        CVbox.setAttribute("id", "CVbox")
+        CVp.setAttribute("id", "CVp")
 
-        renderer2.clear();
-        composer.render();
-        renderer2.render(scene2, camera);
-    })
-})
+        gsap.set(popUpEl, {
+            display: 'block'
+        })
+
+        classificationEL.innerHTML = box.classification
+        titleEl.innerHTML = box.title
+        textEl.innerHTML = box.text
+
+        close.addEventListener('click', () => {
+            gsap.set(popUpEl, {
+                display: 'None'
+            })
+
+        })
+    }
+
+    for (let i = 0; i < intersects2.length; i++) {
+
+        const box = intersects2[i].object
+
+        for (let i = 0; i < AIEd.children.length; i++) {
+            const box = AIEd.children[i]
+            box.material.opacity = 1
+        }
+        for (let i = 0; i < NLP.children.length; i++) {
+            const box = NLP.children[i]
+            box.material.opacity = 1
+        }
+        for (let i = 0; i < CV.children.length; i++) {
+            const box = CV.children[i]
+            box.material.opacity = 1
+        }
+        line1.material.opacity = 0.3
+        line2.material.opacity = 0.3
+        line3.material.opacity = 0.3
+
+        Allbox.setAttribute("id", "Allbox")
+        Allp.setAttribute("id", "Allp")
+        AIEdbox.setAttribute("id", "AIEdbox")
+        AIEdp.setAttribute("id", "AIEdp")
+        NLPbox.setAttribute("id", "NLPbox")
+        NLPp.setAttribute("id", "NLPp")
+        CVbox.setAttribute("id", "CVbox")
+        CVp.setAttribute("id", "CVp")
+
+        gsap.set(popUpEl, {
+            display: 'block'
+        })
+
+        classificationEL.innerHTML = box.classification
+        titleEl.innerHTML = box.title
+        textEl.innerHTML = box.text
+
+        close.addEventListener('click', () => {
+            gsap.set(popUpEl, {
+                display: 'None'
+            })
+        })
+
+    }
+
+    for (let i = 0; i < intersects3.length; i++) {
+
+        const box = intersects3[i].object
+
+        for (let i = 0; i < AIEd.children.length; i++) {
+            const box = AIEd.children[i]
+            box.material.opacity = 1
+        }
+        for (let i = 0; i < NLP.children.length; i++) {
+            const box = NLP.children[i]
+            box.material.opacity = 1
+        }
+        for (let i = 0; i < CV.children.length; i++) {
+            const box = CV.children[i]
+            box.material.opacity = 1
+        }
+        line1.material.opacity = 0.3
+        line2.material.opacity = 0.3
+        line3.material.opacity = 0.3
+
+        Allbox.setAttribute("id", "Allbox")
+        Allp.setAttribute("id", "Allp")
+        AIEdbox.setAttribute("id", "AIEdbox")
+        AIEdp.setAttribute("id", "AIEdp")
+        NLPbox.setAttribute("id", "NLPbox")
+        NLPp.setAttribute("id", "NLPp")
+        CVbox.setAttribute("id", "CVbox")
+        CVp.setAttribute("id", "CVp")
+
+        gsap.set(popUpEl, {
+            display: 'block'
+        })
+
+        classificationEL.innerHTML = box.classification
+        titleEl.innerHTML = box.title
+        textEl.innerHTML = box.text
+
+        close.addEventListener('click', () => {
+            gsap.set(popUpEl, {
+                display: 'None'
+            })
+        })
+
+    }
+}

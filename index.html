@@ -18,6 +18,21 @@
         
         #popUpEl {
             display: none;
+            margin-top: 20%;
+            margin-left: 75%;
+            width: 20%;
+            height: 20%;
+        }
+        
+        #titleEl {
+            font-size: 30px;
+        }
+        
+        #close {
+            background-color: blue;
+            color: white;
+            font: 20px;
+            position: absolute;
         }
         
         #AIEdboxc {
@@ -81,15 +96,22 @@
                     <p id="CVp" class="z-100 text-white my-3 inline font-extrabold">Computer Vision</p>
                 </div>
             </div>
-            <div id="popUpEl" class="bg-black bg-opacity-50 fixed px-4 py-2">
-                <h2 id="headEl" class="text-white text-xs">classification</h2>
-                <p id="conEl" class="text-white font-bold text-lg">Paper Name</p>
+            <div id="popUpEl" class="bg-black bg-opacity-50 fixed">
+                <a href="#" id="close">✖</a>
+                <div class="px-10 py-10">
+                    <h2 id="classEl" class="text-white text-xs">classification</h2>
+                    <p id="titleEl" class="text-white font-bold">Paper Name</p>
+                    <p id="textEl" class="text-white text-s">Text Area</p>
+                </div>
             </div>
             <div class="flex h-screen xl:w-fit bg-black" id="canvasContainer">
                 <canvas></canvas>
             </div>
         </div>
     </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.103.0/build/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.4.0/gsap.min.js"></script>
     <script type="module" src="/main.js"></script>
 </body>
 
