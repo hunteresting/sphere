@@ -1,5 +1,6 @@
 import gsap from 'gsap'
 import * as THREE from 'three'
+import * as TWEEN from 'tween'
 import { Lensflare, LensflareElement } from './flare.js';
 import vertexShader from './shaders/vertex.glsl'
 import fragmentShader from './shaders/fragment.glsl'
@@ -206,7 +207,7 @@ function createBlue(lat, lng, classification, title, text) {
 }
 
 
-for (let i = 0; i < 1; i++) {
+for (let i = 0; i < 70; i++) {
     var a = getRandomNumber(-90, 90)
     var b = getRandomNumber(-180, 180)
     createBlue(a.real, b.real, 'Classification', 'Headline', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.')
@@ -250,7 +251,7 @@ function createblue2(lat, lng, classification, title, text) {
 }
 
 
-for (let i = 0; i < 1; i++) {
+for (let i = 0; i < 70; i++) {
     var a = getRandomNumber(-90, 90)
     var b = getRandomNumber(-180, 180)
     createblue2(a.real, b.real, 'Classification', 'Headline', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.')
@@ -263,7 +264,7 @@ group.add(AIEd)
 
 function createblue3(lat, lng, classification, title, text) {
     const box = new THREE.Mesh(
-        new THREE.BoxGeometry(0.2, 0.2, 0.2),
+        new THREE.BoxGeometry(0.15, 0.15, 0.15),
         new THREE.MeshBasicMaterial({
             color: '#1462ff',
             opacity: 1,
@@ -296,10 +297,10 @@ function createblue3(lat, lng, classification, title, text) {
 }
 
 
-for (let i = 0; i < 1; i++) {
+for (let i = 0; i < 70; i++) {
     var a = getRandomNumber(-90, 90)
     var b = getRandomNumber(-180, 180)
-    createblue3(0, 0, 'Classification', 'Headline', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.')
+    createblue3(a.real, b.real, 'Classification', 'Headline', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.')
 
 }
 
@@ -617,8 +618,10 @@ function boxClick(event) {
 
         stopstate = true
 
-        group.rotation.x = -box.latitude * Math.PI
-        group.rotation.y = -box.longitude * Math.PI
+        gsap.to(group.rotation, 1, { x: box.longitude * (Math.PI / 180) });
+        gsap.to(group.rotation, 1, { y: -box.latitude * (Math.PI / 180) });
+
+        gsap.to(camera.position, 1, { z: 7 });
 
 
         classificationEL.innerHTML = box.classification
@@ -630,6 +633,8 @@ function boxClick(event) {
                 display: 'None'
             })
             stopstate = false
+
+            gsap.to(camera.position, 1, { z: 10 });
         })
     }
 
@@ -668,8 +673,10 @@ function boxClick(event) {
 
         stopstate = true
 
-        group.rotation.x = -box.latitude * Math.PI
-        group.rotation.y = -box.longitude * Math.PI
+        gsap.to(group.rotation, 1, { x: box.longitude * (Math.PI / 180) });
+        gsap.to(group.rotation, 1, { y: -box.latitude * (Math.PI / 180) });
+
+        gsap.to(camera.position, 1, { z: 7 });
 
 
         classificationEL.innerHTML = box.classification
@@ -681,6 +688,8 @@ function boxClick(event) {
                 display: 'None'
             })
             stopstate = false
+
+            gsap.to(camera.position, 1, { z: 10 });
         })
 
     }
@@ -719,8 +728,11 @@ function boxClick(event) {
         })
 
         stopstate = true
-        group.rotation.x = -box.latitude * Math.PI
-        group.rotation.y = -box.longitude * Math.PI
+
+        gsap.to(group.rotation, 1, { x: box.longitude * (Math.PI / 180) });
+        gsap.to(group.rotation, 1, { y: -box.latitude * (Math.PI / 180) });
+
+        gsap.to(camera.position, 1, { z: 7 });
 
         classificationEL.innerHTML = box.classification
         titleEl.innerHTML = box.title
@@ -732,6 +744,8 @@ function boxClick(event) {
             })
             stopstate = false
             console.log(stopstate)
+
+            gsap.to(camera.position, 1, { z: 10 });
         })
 
     }
