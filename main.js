@@ -1,9 +1,13 @@
 import gsap from 'gsap'
 import * as THREE from 'three'
-import * as TWEEN from 'tween'
 import { Lensflare, LensflareElement } from './flare.js';
 import vertexShader from './shaders/vertex.glsl'
 import fragmentShader from './shaders/fragment.glsl'
+import atmosphereVertexShader from './shaders/atmosphereVertex.glsl'
+import atmosphereFragmentShader from './shaders/atmosphereFragment.glsl'
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass'
 
 
 const canvasContainer = document.querySelector('#canvasContainer')
@@ -22,6 +26,20 @@ scene.background = new THREE.Color(0x01152E)
 
 renderer.setSize(canvasContainer.offsetWidth, canvasContainer.offsetHeight)
 renderer.setPixelRatio(window.devicePixelRatio)
+
+const effectComposer = new EffectComposer(renderer)
+effectComposer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+effectComposer.setSize(window.innerWidth, window.innerHeight)
+
+const renderPass = new RenderPass(scene, camera)
+effectComposer.addPass(renderPass)
+    // Unreal Bloom pass
+const unrealBloomPass = new UnrealBloomPass()
+effectComposer.addPass(unrealBloomPass)
+
+unrealBloomPass.strength = 1
+unrealBloomPass.radius = 5
+unrealBloomPass.threshold = 0
 
 const sphere = new THREE.Mesh(new THREE.SphereGeometry(5, 50, 50),
     new THREE.ShaderMaterial({
@@ -184,6 +202,7 @@ function createBlue(lat, lng, classification, title, text) {
 
     )
 
+
     const latitude = (lat / 180) * Math.PI
     const longitude = (lng / 180) * Math.PI
     const radius = 5
@@ -307,6 +326,7 @@ for (let i = 0; i < 70; i++) {
 
 }
 
+
 sphere.rotation.y = -Math.PI / 2
 
 group.rotation.offset = {
@@ -329,6 +349,7 @@ const classificationEL = document.getElementById('classEl')
 const titleEl = document.getElementById('titleEl')
 const textEl = document.getElementById('textEl')
 const close = document.getElementById('close')
+const boxcover = document.getElementById('box')
 var raycaster = new THREE.Raycaster();
 
 function animate() {
@@ -385,7 +406,7 @@ canvasContainer.addEventListener('mousedown', ({ clientX, clientY }) => {
 
 addEventListener('mousemove', (event) => {
 
-    mouse.x = ((event.clientX - innerWidth / 2) / innerWidth) * 2 - 0.01
+    mouse.x = ((event.clientX - innerWidth / 2) / innerWidth) * 2 + 0.03
     mouse.y = -(event.clientY / innerHeight) * 2 + 1
 
 
@@ -636,19 +657,22 @@ function boxClick(event) {
 
         for (let i = 0; i < AIEd.children.length; i++) {
             const box = AIEd.children[i]
-            box.material.opacity = 1
+            box.material.opacity = 0.2
         }
         for (let i = 0; i < NLP.children.length; i++) {
             const box = NLP.children[i]
-            box.material.opacity = 1
+            box.material.opacity = 0.2
         }
         for (let i = 0; i < CV.children.length; i++) {
             const box = CV.children[i]
-            box.material.opacity = 1
+            box.material.opacity = 0.2
         }
-        line1.material.opacity = 0.3
-        line2.material.opacity = 0.3
-        line3.material.opacity = 0.3
+
+        box.material.opacity = 1
+
+        line1.material.opacity = 0.1
+        line2.material.opacity = 0.1
+        line3.material.opacity = 0.1
 
         Allbox.setAttribute("id", "Allbox")
         Allp.setAttribute("id", "Allp")
@@ -658,6 +682,11 @@ function boxClick(event) {
         NLPp.setAttribute("id", "NLPp")
         CVbox.setAttribute("id", "CVbox")
         CVp.setAttribute("id", "CVp")
+
+        gsap.to(group.rotation, 1, { x: box.longitude * (Math.PI / 180) });
+        gsap.to(group.rotation, 1, { y: -box.latitude * (Math.PI / 180) });
+
+        gsap.to(camera.position, 1, { z: 7 });
 
         gsap.set(popUpEl, {
             display: 'block'
@@ -669,12 +698,6 @@ function boxClick(event) {
 
         stopstate = true
 
-        gsap.to(group.rotation, 1, { x: box.longitude * (Math.PI / 180) });
-        gsap.to(group.rotation, 1, { y: -box.latitude * (Math.PI / 180) });
-
-        gsap.to(camera.position, 1, { z: 7 });
-
-
         classificationEL.innerHTML = box.classification
         titleEl.innerHTML = box.title
         textEl.innerHTML = box.text
@@ -683,9 +706,31 @@ function boxClick(event) {
             gsap.set(popUpEl, {
                 display: 'None'
             })
-            stopstate = false
 
+            gsap.set(boxcover, {
+                display: 'None'
+            })
+
+            stopstate = false
             gsap.to(camera.position, 1, { z: 10 });
+
+            for (let i = 0; i < AIEd.children.length; i++) {
+                const box = AIEd.children[i]
+                box.material.opacity = 1
+            }
+            for (let i = 0; i < NLP.children.length; i++) {
+                const box = NLP.children[i]
+                box.material.opacity = 1
+            }
+            for (let i = 0; i < CV.children.length; i++) {
+                const box = CV.children[i]
+                box.material.opacity = 1
+            }
+
+            line1.material.opacity = 0.3
+            line2.material.opacity = 0.3
+            line3.material.opacity = 0.3
+
         })
     }
 
@@ -695,19 +740,22 @@ function boxClick(event) {
 
         for (let i = 0; i < AIEd.children.length; i++) {
             const box = AIEd.children[i]
-            box.material.opacity = 1
+            box.material.opacity = 0.2
         }
         for (let i = 0; i < NLP.children.length; i++) {
             const box = NLP.children[i]
-            box.material.opacity = 1
+            box.material.opacity = 0.2
         }
         for (let i = 0; i < CV.children.length; i++) {
             const box = CV.children[i]
-            box.material.opacity = 1
+            box.material.opacity = 0.2
         }
-        line1.material.opacity = 0.3
-        line2.material.opacity = 0.3
-        line3.material.opacity = 0.3
+
+        box.material.opacity = 1
+
+        line1.material.opacity = 0.1
+        line2.material.opacity = 0.1
+        line3.material.opacity = 0.1
 
         Allbox.setAttribute("id", "Allbox")
         Allp.setAttribute("id", "Allp")
@@ -733,7 +781,6 @@ function boxClick(event) {
 
         gsap.to(camera.position, 1, { z: 7 });
 
-
         classificationEL.innerHTML = box.classification
         titleEl.innerHTML = box.title
         textEl.innerHTML = box.text
@@ -743,8 +790,24 @@ function boxClick(event) {
                 display: 'None'
             })
             stopstate = false
-
             gsap.to(camera.position, 1, { z: 10 });
+
+            for (let i = 0; i < AIEd.children.length; i++) {
+                const box = AIEd.children[i]
+                box.material.opacity = 1
+            }
+            for (let i = 0; i < NLP.children.length; i++) {
+                const box = NLP.children[i]
+                box.material.opacity = 1
+            }
+            for (let i = 0; i < CV.children.length; i++) {
+                const box = CV.children[i]
+                box.material.opacity = 1
+            }
+
+            line1.material.opacity = 0.3
+            line2.material.opacity = 0.3
+            line3.material.opacity = 0.3
         })
 
     }
@@ -755,19 +818,22 @@ function boxClick(event) {
 
         for (let i = 0; i < AIEd.children.length; i++) {
             const box = AIEd.children[i]
-            box.material.opacity = 1
+            box.material.opacity = 0.2
         }
         for (let i = 0; i < NLP.children.length; i++) {
             const box = NLP.children[i]
-            box.material.opacity = 1
+            box.material.opacity = 0.2
         }
         for (let i = 0; i < CV.children.length; i++) {
             const box = CV.children[i]
-            box.material.opacity = 1
+            box.material.opacity = 0.2
         }
-        line1.material.opacity = 0.3
-        line2.material.opacity = 0.3
-        line3.material.opacity = 0.3
+
+        box.material.opacity = 1
+
+        line1.material.opacity = 0.1
+        line2.material.opacity = 0.1
+        line3.material.opacity = 0.1
 
         Allbox.setAttribute("id", "Allbox")
         Allp.setAttribute("id", "Allp")
@@ -802,9 +868,24 @@ function boxClick(event) {
                 display: 'None'
             })
             stopstate = false
-            console.log(stopstate)
-
             gsap.to(camera.position, 1, { z: 10 });
+
+            for (let i = 0; i < AIEd.children.length; i++) {
+                const box = AIEd.children[i]
+                box.material.opacity = 1
+            }
+            for (let i = 0; i < NLP.children.length; i++) {
+                const box = NLP.children[i]
+                box.material.opacity = 1
+            }
+            for (let i = 0; i < CV.children.length; i++) {
+                const box = CV.children[i]
+                box.material.opacity = 1
+            }
+
+            line1.material.opacity = 0.3
+            line2.material.opacity = 0.3
+            line3.material.opacity = 0.3
         })
 
     }
