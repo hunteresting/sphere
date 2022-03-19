@@ -186,7 +186,7 @@ function createBlue(lat, lng, classification, title, text) {
 
     const latitude = (lat / 180) * Math.PI
     const longitude = (lng / 180) * Math.PI
-    const radius = 4.7
+    const radius = 5
 
     const x = radius * Math.cos(latitude) * Math.sin(longitude)
     const y = radius * Math.sin(latitude)
@@ -204,6 +204,7 @@ function createBlue(lat, lng, classification, title, text) {
     box.text = text
     box.longitude = lat
     box.latitude = lng
+    box.thumbnail = title
 }
 
 
@@ -229,7 +230,7 @@ function createblue2(lat, lng, classification, title, text) {
 
     const latitude = (lat / 180) * Math.PI
     const longitude = (lng / 180) * Math.PI
-    const radius = 4.7
+    const radius = 5
 
     const x = radius * Math.cos(latitude) * Math.sin(longitude)
     const y = radius * Math.sin(latitude)
@@ -248,6 +249,7 @@ function createblue2(lat, lng, classification, title, text) {
     box.text = text
     box.longitude = lat
     box.latitude = lng
+    box.thumbnail = title
 }
 
 
@@ -294,6 +296,7 @@ function createblue3(lat, lng, classification, title, text) {
     box.text = text
     box.longitude = lat
     box.latitude = lng
+    box.thumbnail = title
 }
 
 
@@ -319,18 +322,56 @@ const mouse = {
     yPrev: undefined
 }
 
+const thumbnail = document.getElementById('thumbnail')
+const thumbnailEl = document.getElementById('thumbnailEl')
 const popUpEl = document.getElementById('popUpEl')
 const classificationEL = document.getElementById('classEl')
 const titleEl = document.getElementById('titleEl')
 const textEl = document.getElementById('textEl')
 const close = document.getElementById('close')
+var raycaster = new THREE.Raycaster();
 
 function animate() {
     requestAnimationFrame(animate)
     renderer.render(scene, camera)
+    raycaster.setFromCamera(mouse, camera)
+
     if (!stopstate) {
         group.rotation.y += 0.0003
     }
+
+    var intersects1 = raycaster.intersectObjects(AIEd.children);
+    var intersects2 = raycaster.intersectObjects(NLP.children);
+    var intersects3 = raycaster.intersectObjects(CV.children);
+
+    gsap.set(thumbnail, {
+        display: 'None'
+    })
+
+    for (let i = 0; i < intersects1.length; i++) {
+        const box = intersects1[i].object
+        gsap.set(thumbnail, {
+            display: 'block'
+        })
+        thumbnailEl.innerHTML = box.thumbnail
+    }
+
+    for (let i = 0; i < intersects2.length; i++) {
+        const box = intersects2[i].object
+        gsap.set(thumbnail, {
+            display: 'block'
+        })
+        thumbnailEl.innerHTML = box.thumbnail
+    }
+
+    for (let i = 0; i < intersects3.length; i++) {
+        const box = intersects3[i].object
+        gsap.set(thumbnail, {
+            display: 'block'
+        })
+        thumbnailEl.innerHTML = box.thumbnail
+    }
+    renderer.render(scene, camera)
 }
 
 animate()
@@ -346,6 +387,12 @@ addEventListener('mousemove', (event) => {
 
     mouse.x = ((event.clientX - innerWidth / 2) / innerWidth) * 2 - 0.01
     mouse.y = -(event.clientY / innerHeight) * 2 + 1
+
+
+    gsap.set(thumbnail, {
+        x: event.clientX,
+        y: event.clientY
+    })
 
     if (mouse.down) {
 
@@ -616,6 +663,10 @@ function boxClick(event) {
             display: 'block'
         })
 
+        gsap.set(thumbnail, {
+            display: 'none'
+        })
+
         stopstate = true
 
         gsap.to(group.rotation, 1, { x: box.longitude * (Math.PI / 180) });
@@ -669,6 +720,10 @@ function boxClick(event) {
 
         gsap.set(popUpEl, {
             display: 'block'
+        })
+
+        gsap.set(thumbnail, {
+            display: 'none'
         })
 
         stopstate = true
@@ -725,6 +780,10 @@ function boxClick(event) {
 
         gsap.set(popUpEl, {
             display: 'block'
+        })
+
+        gsap.set(thumbnail, {
+            display: 'none'
         })
 
         stopstate = true
