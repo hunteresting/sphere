@@ -1,7 +1,10 @@
+uniform sampler2D baseTexture;
+uniform sampler2D bloomTexture;
 
+varying vec2 vUv;
 
-varying vec3 vertexNormal; // (0, 0, 0)
 void main() {
-  float intensity = pow(0.01 - dot(vertexNormal, vec3(0, 0, 1.0)), 2.0);
-  gl_FragColor = vec4(1, 0, 0, 1.0) * intensity;
+
+  gl_FragColor = ( texture2D( baseTexture, vUv ) + vec4( 1.0 ) * texture2D( bloomTexture, vUv ) );
+
 }

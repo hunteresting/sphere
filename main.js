@@ -1,11 +1,14 @@
 import gsap from 'gsap'
 import * as THREE from 'three'
+
 import { Lensflare, LensflareElement } from './flare.js';
 import vertexShader from './shaders/vertex.glsl'
 import fragmentShader from './shaders/fragment.glsl'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass'
+import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
+
 
 
 const canvasContainer = document.querySelector('#canvasContainer')
@@ -25,20 +28,6 @@ scene.background = new THREE.Color(0x01152E)
 renderer.setSize(canvasContainer.offsetWidth, canvasContainer.offsetHeight)
 renderer.setPixelRatio(window.devicePixelRatio)
 
-const effectComposer = new EffectComposer(renderer)
-effectComposer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-effectComposer.setSize(window.innerWidth, window.innerHeight)
-
-const renderPass = new RenderPass(scene, camera)
-effectComposer.addPass(renderPass)
-    // Unreal Bloom pass
-const unrealBloomPass = new UnrealBloomPass()
-effectComposer.addPass(unrealBloomPass)
-
-unrealBloomPass.strength = 1
-unrealBloomPass.radius = 5
-unrealBloomPass.threshold = 0
-
 const sphere = new THREE.Mesh(new THREE.SphereGeometry(5, 50, 50),
     new THREE.ShaderMaterial({
         vertexShader,
@@ -54,6 +43,19 @@ scene.add(sphere)
 const group = new THREE.Group()
 group.add(sphere)
 scene.add(group)
+
+
+const effectComposer = new EffectComposer(renderer)
+effectComposer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+effectComposer.setSize(window.innerWidth, window.innerHeight)
+
+const unrealBloomPass = new UnrealBloomPass()
+unrealBloomPass.strength = 3
+unrealBloomPass.radius = 0.16
+unrealBloomPass.threshold = 0.324
+
+var renderPass = new RenderPass(scene, camera)
+effectComposer.addPass(renderPass)
 
 const starVertices = []
 for (let i = 0; i < 500; i++) {
@@ -148,11 +150,16 @@ function getRandomNumber() {
     };
 }
 
+const dots = new THREE.Group()
+group.add(dots)
+
 function createdots(lat, lng) {
     const dot = new THREE.Mesh(
         new THREE.CircleGeometry(0.015, 32),
         new THREE.MeshBasicMaterial({
             color: '#FFFFFF',
+            opacity: 1,
+            transparent: true
         }),
 
     )
@@ -173,7 +180,7 @@ function createdots(lat, lng) {
     dot.lookAt(0, 0, 0)
     dot.geometry.applyMatrix4(new THREE.Matrix4().makeTranslation(0, 0, -0.2))
 
-    group.add(dot)
+    dots.add(dot)
 }
 
 
@@ -184,10 +191,8 @@ for (let i = 0; i < 1000; i++) {
 
 }
 
-const boxes = new THREE.Group
 const NLP = new THREE.Group()
 group.add(NLP)
-group.add(boxes)
 
 function createBlue(lat, lng, classification, title, text) {
     const box = new THREE.Mesh(
@@ -350,7 +355,6 @@ const classificationEL = document.getElementById('classEl')
 const titleEl = document.getElementById('titleEl')
 const textEl = document.getElementById('textEl')
 const close = document.getElementById('close')
-const boxcover = document.getElementById('box')
 var raycaster = new THREE.Raycaster();
 
 function animate() {
@@ -400,7 +404,9 @@ function animate() {
         }
         thumbnailEl.innerHTML = box.thumbnail
     }
-    renderer.render(scene, camera)
+
+    renderer.render(scene, camera);
+    effectComposer.render();
 }
 
 animate()
@@ -703,8 +709,13 @@ function boxClick(event) {
                 box.material.opacity = 0.2
                 box.invisibility = true
             }
+            for (let i = 0; i < dots.children.length; i++) {
+                const dot = dots.children[i]
+                dot.material.opacity = 0.2
+            }
 
             box.material.opacity = 1
+            effectComposer.addPass(unrealBloomPass)
 
             line1.material.opacity = 0.1
             line2.material.opacity = 0.1
@@ -727,7 +738,6 @@ function boxClick(event) {
             gsap.set(popUpEl, {
                 display: 'block'
             })
-
 
             stopstate = true
 
@@ -758,11 +768,16 @@ function boxClick(event) {
                     box.material.opacity = 1
                     box.invisibility = false
                 }
+                for (let i = 0; i < dots.children.length; i++) {
+                    const dot = dots.children[i]
+                    dot.material.opacity = 1
+                }
 
                 line1.material.opacity = 0.3
                 line2.material.opacity = 0.3
                 line3.material.opacity = 0.3
 
+                effectComposer.removePass(unrealBloomPass)
             })
         }
     }
@@ -788,8 +803,13 @@ function boxClick(event) {
                 box.material.opacity = 0.2
                 box.invisibility = true
             }
+            for (let i = 0; i < dots.children.length; i++) {
+                const dot = dots.children[i]
+                dot.material.opacity = 0.2
+            }
 
             box.material.opacity = 1
+            effectComposer.addPass(unrealBloomPass)
 
             line1.material.opacity = 0.1
             line2.material.opacity = 0.1
@@ -845,10 +865,16 @@ function boxClick(event) {
                     box.material.opacity = 1
                     box.invisibility = false
                 }
+                for (let i = 0; i < dots.children.length; i++) {
+                    const dot = dots.children[i]
+                    dot.material.opacity = 1
+                }
 
                 line1.material.opacity = 0.3
                 line2.material.opacity = 0.3
                 line3.material.opacity = 0.3
+
+                effectComposer.removePass(unrealBloomPass)
             })
 
         }
@@ -875,8 +901,13 @@ function boxClick(event) {
                 box.material.opacity = 0.2
                 box.invisibility = true
             }
+            for (let i = 0; i < dots.children.length; i++) {
+                const dot = dots.children[i]
+                dot.material.opacity = 0.2
+            }
 
             box.material.opacity = 1
+            effectComposer.addPass(unrealBloomPass)
 
             line1.material.opacity = 0.1
             line2.material.opacity = 0.1
@@ -911,7 +942,6 @@ function boxClick(event) {
                 gsap.set(popUpEl, {
                     display: 'None'
                 })
-
                 stopstate = false
                 gsap.to(camera.position, 1, { z: 10 });
 
@@ -930,10 +960,16 @@ function boxClick(event) {
                     box.material.opacity = 1
                     box.invisibility = false
                 }
+                for (let i = 0; i < dots.children.length; i++) {
+                    const dot = dots.children[i]
+                    dot.material.opacity = 1
+                }
 
                 line1.material.opacity = 0.3
                 line2.material.opacity = 0.3
                 line3.material.opacity = 0.3
+
+                effectComposer.removePass(unrealBloomPass)
             })
 
         }
