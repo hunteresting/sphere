@@ -222,6 +222,7 @@ function createBlue(lat, lng, classification, title, text) {
     box.longitude = lat
     box.latitude = lng
     box.thumbnail = title
+    box.invisibility = false
 }
 
 
@@ -267,6 +268,7 @@ function createblue2(lat, lng, classification, title, text) {
     box.longitude = lat
     box.latitude = lng
     box.thumbnail = title
+    box.invisibility = false
 }
 
 
@@ -314,6 +316,7 @@ function createblue3(lat, lng, classification, title, text) {
     box.longitude = lat
     box.latitude = lng
     box.thumbnail = title
+    box.invisibility = false
 }
 
 
@@ -402,10 +405,14 @@ function animate() {
 
 animate()
 
+
+
 canvasContainer.addEventListener('mousedown', ({ clientX, clientY }) => {
-    mouse.down = true
-    mouse.xPrev = clientX
-    mouse.yPrev = clientY
+    if (!stopstate) {
+        mouse.down = true
+        mouse.xPrev = clientX
+        mouse.yPrev = clientY
+    }
 })
 
 
@@ -436,6 +443,8 @@ addEventListener('mousemove', (event) => {
 addEventListener('mouseup', () => {
     mouse.down = false
 })
+
+
 
 const material1 = new THREE.LineBasicMaterial({
     color: 0xffffff,
@@ -524,17 +533,21 @@ AIEdblock.addEventListener('click', () => {
         const box = AIEd.children[i]
         if (box.material.opacity = 0.2) {
             box.material.opacity = 1
+            box.invisibility = false
         } else {
             box.material.opacity = 0.2
+            box.invisibility = true
         }
     }
     for (let i = 0; i < NLP.children.length; i++) {
         const box = NLP.children[i]
         box.material.opacity = 0.2
+        box.invisibility = true
     }
     for (let i = 0; i < CV.children.length; i++) {
         const box = CV.children[i]
         box.material.opacity = 0.2
+        box.invisibility = true
     }
     line1.material.opacity = 0.3
     line2.material.opacity = 0.1
@@ -555,18 +568,22 @@ NLPblock.addEventListener('click', () => {
     for (let i = 0; i < AIEd.children.length; i++) {
         const box = AIEd.children[i]
         box.material.opacity = 0.2
+        box.invisibility = true
     }
     for (let i = 0; i < NLP.children.length; i++) {
         const box = NLP.children[i]
         if (box.material.opacity = 0.2) {
             box.material.opacity = 1
+            box.invisibility = false
         } else {
             box.material.opacity = 0.2
+            box.invisibility = true
         }
     }
     for (let i = 0; i < CV.children.length; i++) {
         const box = CV.children[i]
         box.material.opacity = 0.2
+        box.invisibility = true
     }
     line1.material.opacity = 0.1
     line2.material.opacity = 0.3
@@ -586,17 +603,21 @@ CVblock.addEventListener('click', () => {
     for (let i = 0; i < AIEd.children.length; i++) {
         const box = AIEd.children[i]
         box.material.opacity = 0.2
+        box.invisibility = true
     }
     for (let i = 0; i < NLP.children.length; i++) {
         const box = NLP.children[i]
         box.material.opacity = 0.2
+        box.invisibility = true
     }
     for (let i = 0; i < CV.children.length; i++) {
         const box = CV.children[i]
         if (box.material.opacity = 0.2) {
             box.material.opacity = 1
+            box.invisibility = false
         } else {
             box.material.opacity = 0.2
+            box.invisibility = true
         }
     }
     line1.material.opacity = 0.1
@@ -617,14 +638,18 @@ Allblock.addEventListener('click', () => {
     for (let i = 0; i < AIEd.children.length; i++) {
         const box = AIEd.children[i]
         box.material.opacity = 1
+        box.invisibility = false
+
     }
     for (let i = 0; i < NLP.children.length; i++) {
         const box = NLP.children[i]
         box.material.opacity = 1
+        box.invisibility = false
     }
     for (let i = 0; i < CV.children.length; i++) {
         const box = CV.children[i]
         box.material.opacity = 1
+        box.invisibility = false
     }
     line1.material.opacity = 0.3
     line2.material.opacity = 0.3
@@ -660,230 +685,257 @@ function boxClick(event) {
     for (let i = 0; i < intersects1.length; i++) {
 
         const box = intersects1[i].object
+        const state = box.invisibility
 
-        for (let i = 0; i < AIEd.children.length; i++) {
-            const box = AIEd.children[i]
-            box.material.opacity = 0.2
-        }
-        for (let i = 0; i < NLP.children.length; i++) {
-            const box = NLP.children[i]
-            box.material.opacity = 0.2
-        }
-        for (let i = 0; i < CV.children.length; i++) {
-            const box = CV.children[i]
-            box.material.opacity = 0.2
-        }
-
-        box.material.opacity = 1
-
-        line1.material.opacity = 0.1
-        line2.material.opacity = 0.1
-        line3.material.opacity = 0.1
-
-        Allbox.setAttribute("id", "Allbox")
-        Allp.setAttribute("id", "Allp")
-        AIEdbox.setAttribute("id", "AIEdbox")
-        AIEdp.setAttribute("id", "AIEdp")
-        NLPbox.setAttribute("id", "NLPbox")
-        NLPp.setAttribute("id", "NLPp")
-        CVbox.setAttribute("id", "CVbox")
-        CVp.setAttribute("id", "CVp")
-
-        gsap.to(group.rotation, 1, { x: box.longitude * (Math.PI / 180) });
-        gsap.to(group.rotation, 1, { y: -box.latitude * (Math.PI / 180) });
-
-        gsap.to(camera.position, 1, { z: 7 });
-
-        gsap.set(popUpEl, {
-            display: 'block'
-        })
-
-
-        stopstate = true
-
-        classificationEL.innerHTML = box.classification
-        titleEl.innerHTML = box.title
-        textEl.innerHTML = box.text
-
-        close.addEventListener('click', () => {
-            gsap.set(popUpEl, {
-                display: 'None'
-            })
-
-            stopstate = false
-            gsap.to(camera.position, 1, { z: 10 });
-
+        if (!state) {
             for (let i = 0; i < AIEd.children.length; i++) {
                 const box = AIEd.children[i]
-                box.material.opacity = 1
+                box.material.opacity = 0.2
+                box.invisibility = true
             }
             for (let i = 0; i < NLP.children.length; i++) {
                 const box = NLP.children[i]
-                box.material.opacity = 1
+                box.material.opacity = 0.2
+                box.invisibility = true
             }
             for (let i = 0; i < CV.children.length; i++) {
                 const box = CV.children[i]
-                box.material.opacity = 1
+                box.material.opacity = 0.2
+                box.invisibility = true
             }
 
-            line1.material.opacity = 0.3
-            line2.material.opacity = 0.3
-            line3.material.opacity = 0.3
+            box.material.opacity = 1
 
-        })
+            line1.material.opacity = 0.1
+            line2.material.opacity = 0.1
+            line3.material.opacity = 0.1
+
+            Allbox.setAttribute("id", "Allbox")
+            Allp.setAttribute("id", "Allp")
+            AIEdbox.setAttribute("id", "AIEdbox")
+            AIEdp.setAttribute("id", "AIEdp")
+            NLPbox.setAttribute("id", "NLPbox")
+            NLPp.setAttribute("id", "NLPp")
+            CVbox.setAttribute("id", "CVbox")
+            CVp.setAttribute("id", "CVp")
+
+            gsap.to(group.rotation, 1, { x: box.longitude * (Math.PI / 180) });
+            gsap.to(group.rotation, 1, { y: -box.latitude * (Math.PI / 180) });
+
+            gsap.to(camera.position, 1, { z: 7 });
+
+            gsap.set(popUpEl, {
+                display: 'block'
+            })
+
+
+            stopstate = true
+
+            classificationEL.innerHTML = box.classification
+            titleEl.innerHTML = box.title
+            textEl.innerHTML = box.text
+
+            close.addEventListener('click', () => {
+                gsap.set(popUpEl, {
+                    display: 'None'
+                })
+
+                stopstate = false
+                gsap.to(camera.position, 1, { z: 10 });
+
+                for (let i = 0; i < AIEd.children.length; i++) {
+                    const box = AIEd.children[i]
+                    box.material.opacity = 1
+                    box.invisibility = false
+                }
+                for (let i = 0; i < NLP.children.length; i++) {
+                    const box = NLP.children[i]
+                    box.material.opacity = 1
+                    box.invisibility = false
+                }
+                for (let i = 0; i < CV.children.length; i++) {
+                    const box = CV.children[i]
+                    box.material.opacity = 1
+                    box.invisibility = false
+                }
+
+                line1.material.opacity = 0.3
+                line2.material.opacity = 0.3
+                line3.material.opacity = 0.3
+
+            })
+        }
     }
 
     for (let i = 0; i < intersects2.length; i++) {
 
         const box = intersects2[i].object
+        const state = box.invisibility
 
-        for (let i = 0; i < AIEd.children.length; i++) {
-            const box = AIEd.children[i]
-            box.material.opacity = 0.2
-        }
-        for (let i = 0; i < NLP.children.length; i++) {
-            const box = NLP.children[i]
-            box.material.opacity = 0.2
-        }
-        for (let i = 0; i < CV.children.length; i++) {
-            const box = CV.children[i]
-            box.material.opacity = 0.2
-        }
-
-        box.material.opacity = 1
-
-        line1.material.opacity = 0.1
-        line2.material.opacity = 0.1
-        line3.material.opacity = 0.1
-
-        Allbox.setAttribute("id", "Allbox")
-        Allp.setAttribute("id", "Allp")
-        AIEdbox.setAttribute("id", "AIEdbox")
-        AIEdp.setAttribute("id", "AIEdp")
-        NLPbox.setAttribute("id", "NLPbox")
-        NLPp.setAttribute("id", "NLPp")
-        CVbox.setAttribute("id", "CVbox")
-        CVp.setAttribute("id", "CVp")
-
-        gsap.set(popUpEl, {
-            display: 'block'
-        })
-
-        gsap.set(thumbnail, {
-            display: 'None'
-        })
-
-        stopstate = true
-
-        gsap.to(group.rotation, 1, { x: box.longitude * (Math.PI / 180) });
-        gsap.to(group.rotation, 1, { y: -box.latitude * (Math.PI / 180) });
-
-        gsap.to(camera.position, 1, { z: 7 });
-
-        classificationEL.innerHTML = box.classification
-        titleEl.innerHTML = box.title
-        textEl.innerHTML = box.text
-
-        close.addEventListener('click', () => {
-            gsap.set(popUpEl, {
-                display: 'None'
-            })
-            stopstate = false
-            gsap.to(camera.position, 1, { z: 10 });
-
+        if (!state) {
             for (let i = 0; i < AIEd.children.length; i++) {
                 const box = AIEd.children[i]
-                box.material.opacity = 1
+                box.material.opacity = 0.2
+                box.invisibility = true
             }
             for (let i = 0; i < NLP.children.length; i++) {
                 const box = NLP.children[i]
-                box.material.opacity = 1
+                box.material.opacity = 0.2
+                box.invisibility = true
             }
             for (let i = 0; i < CV.children.length; i++) {
                 const box = CV.children[i]
-                box.material.opacity = 1
+                box.material.opacity = 0.2
+                box.invisibility = true
             }
 
-            line1.material.opacity = 0.3
-            line2.material.opacity = 0.3
-            line3.material.opacity = 0.3
-        })
+            box.material.opacity = 1
 
+            line1.material.opacity = 0.1
+            line2.material.opacity = 0.1
+            line3.material.opacity = 0.1
+
+            Allbox.setAttribute("id", "Allbox")
+            Allp.setAttribute("id", "Allp")
+            AIEdbox.setAttribute("id", "AIEdbox")
+            AIEdp.setAttribute("id", "AIEdp")
+            NLPbox.setAttribute("id", "NLPbox")
+            NLPp.setAttribute("id", "NLPp")
+            CVbox.setAttribute("id", "CVbox")
+            CVp.setAttribute("id", "CVp")
+
+            gsap.set(popUpEl, {
+                display: 'block'
+            })
+
+            gsap.set(thumbnail, {
+                display: 'None'
+            })
+
+            stopstate = true
+
+            gsap.to(group.rotation, 1, { x: box.longitude * (Math.PI / 180) });
+            gsap.to(group.rotation, 1, { y: -box.latitude * (Math.PI / 180) });
+
+            gsap.to(camera.position, 1, { z: 7 });
+
+            classificationEL.innerHTML = box.classification
+            titleEl.innerHTML = box.title
+            textEl.innerHTML = box.text
+
+            close.addEventListener('click', () => {
+                gsap.set(popUpEl, {
+                    display: 'None'
+                })
+                stopstate = false
+                gsap.to(camera.position, 1, { z: 10 });
+
+                for (let i = 0; i < AIEd.children.length; i++) {
+                    const box = AIEd.children[i]
+                    box.material.opacity = 1
+                    box.invisibility = false
+                }
+                for (let i = 0; i < NLP.children.length; i++) {
+                    const box = NLP.children[i]
+                    box.material.opacity = 1
+                    box.invisibility = false
+                }
+                for (let i = 0; i < CV.children.length; i++) {
+                    const box = CV.children[i]
+                    box.material.opacity = 1
+                    box.invisibility = false
+                }
+
+                line1.material.opacity = 0.3
+                line2.material.opacity = 0.3
+                line3.material.opacity = 0.3
+            })
+
+        }
     }
 
     for (let i = 0; i < intersects3.length; i++) {
 
         const box = intersects3[i].object
+        const state = box.invisibility
 
-        for (let i = 0; i < AIEd.children.length; i++) {
-            const box = AIEd.children[i]
-            box.material.opacity = 0.2
-        }
-        for (let i = 0; i < NLP.children.length; i++) {
-            const box = NLP.children[i]
-            box.material.opacity = 0.2
-        }
-        for (let i = 0; i < CV.children.length; i++) {
-            const box = CV.children[i]
-            box.material.opacity = 0.2
-        }
-
-        box.material.opacity = 1
-
-        line1.material.opacity = 0.1
-        line2.material.opacity = 0.1
-        line3.material.opacity = 0.1
-
-        Allbox.setAttribute("id", "Allbox")
-        Allp.setAttribute("id", "Allp")
-        AIEdbox.setAttribute("id", "AIEdbox")
-        AIEdp.setAttribute("id", "AIEdp")
-        NLPbox.setAttribute("id", "NLPbox")
-        NLPp.setAttribute("id", "NLPp")
-        CVbox.setAttribute("id", "CVbox")
-        CVp.setAttribute("id", "CVp")
-
-        gsap.set(popUpEl, {
-            display: 'block'
-        })
-
-        stopstate = true
-
-        gsap.to(group.rotation, 1, { x: box.longitude * (Math.PI / 180) });
-        gsap.to(group.rotation, 1, { y: -box.latitude * (Math.PI / 180) });
-
-        gsap.to(camera.position, 1, { z: 7 });
-
-        classificationEL.innerHTML = box.classification
-        titleEl.innerHTML = box.title
-        textEl.innerHTML = box.text
-
-        close.addEventListener('click', () => {
-
-            gsap.set(popUpEl, {
-                display: 'None'
-            })
-
-            stopstate = false
-            gsap.to(camera.position, 1, { z: 10 });
-
+        if (!state) {
             for (let i = 0; i < AIEd.children.length; i++) {
                 const box = AIEd.children[i]
-                box.material.opacity = 1
+                box.material.opacity = 0.2
+                box.invisibility = true
             }
             for (let i = 0; i < NLP.children.length; i++) {
                 const box = NLP.children[i]
-                box.material.opacity = 1
+                box.material.opacity = 0.2
+                box.invisibility = true
             }
             for (let i = 0; i < CV.children.length; i++) {
                 const box = CV.children[i]
-                box.material.opacity = 1
+                box.material.opacity = 0.2
+                box.invisibility = true
             }
 
-            line1.material.opacity = 0.3
-            line2.material.opacity = 0.3
-            line3.material.opacity = 0.3
-        })
+            box.material.opacity = 1
 
+            line1.material.opacity = 0.1
+            line2.material.opacity = 0.1
+            line3.material.opacity = 0.1
+
+            Allbox.setAttribute("id", "Allbox")
+            Allp.setAttribute("id", "Allp")
+            AIEdbox.setAttribute("id", "AIEdbox")
+            AIEdp.setAttribute("id", "AIEdp")
+            NLPbox.setAttribute("id", "NLPbox")
+            NLPp.setAttribute("id", "NLPp")
+            CVbox.setAttribute("id", "CVbox")
+            CVp.setAttribute("id", "CVp")
+
+            gsap.set(popUpEl, {
+                display: 'block'
+            })
+
+            stopstate = true
+
+            gsap.to(group.rotation, 1, { x: box.longitude * (Math.PI / 180) });
+            gsap.to(group.rotation, 1, { y: -box.latitude * (Math.PI / 180) });
+
+            gsap.to(camera.position, 1, { z: 7 });
+
+            classificationEL.innerHTML = box.classification
+            titleEl.innerHTML = box.title
+            textEl.innerHTML = box.text
+
+            close.addEventListener('click', () => {
+
+                gsap.set(popUpEl, {
+                    display: 'None'
+                })
+
+                stopstate = false
+                gsap.to(camera.position, 1, { z: 10 });
+
+                for (let i = 0; i < AIEd.children.length; i++) {
+                    const box = AIEd.children[i]
+                    box.material.opacity = 1
+                    box.invisibility = false
+                }
+                for (let i = 0; i < NLP.children.length; i++) {
+                    const box = NLP.children[i]
+                    box.material.opacity = 1
+                    box.invisibility = false
+                }
+                for (let i = 0; i < CV.children.length; i++) {
+                    const box = CV.children[i]
+                    box.material.opacity = 1
+                    box.invisibility = false
+                }
+
+                line1.material.opacity = 0.3
+                line2.material.opacity = 0.3
+                line3.material.opacity = 0.3
+            })
+
+        }
     }
 }
