@@ -51,8 +51,8 @@ effectComposer.setSize(window.innerWidth, window.innerHeight)
 
 const unrealBloomPass = new UnrealBloomPass()
 unrealBloomPass.strength = 3
-unrealBloomPass.radius = 0.16
-unrealBloomPass.threshold = 0.324
+unrealBloomPass.radius = 0.1
+unrealBloomPass.threshold = 0.3
 
 var renderPass = new RenderPass(scene, camera)
 effectComposer.addPass(renderPass)
