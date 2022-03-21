@@ -7,9 +7,9 @@ import fragmentShader from './shaders/fragment.glsl'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass'
-import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
 
 
+//Scene, cameram, renderer 생성
 
 const canvasContainer = document.querySelector('#canvasContainer')
 const scene = new THREE.Scene()
@@ -22,12 +22,13 @@ const renderer = new THREE.WebGLRenderer({
     antialias: true,
     canvas: document.querySelector('canvas')
 })
-
-scene.background = new THREE.Color(0x01152E)
-
 renderer.setSize(canvasContainer.offsetWidth, canvasContainer.offsetHeight)
 renderer.setPixelRatio(window.devicePixelRatio)
 
+//Scene 배경 설정
+scene.background = new THREE.Color(0x01152E)
+
+//틀이 될 구체 설정
 const sphere = new THREE.Mesh(new THREE.SphereGeometry(5, 50, 50),
     new THREE.ShaderMaterial({
         vertexShader,
@@ -38,25 +39,27 @@ sphere.material.alphaTest = 1
 sphere.material.opacity = 0
 sphere.material.transparent = true
 
+//scene에 구체 추가
 scene.add(sphere)
 
+//함께 회전할 group 생성 및 scene에 group 추가
 const group = new THREE.Group()
 group.add(sphere)
 scene.add(group)
 
-
+//발광 효과 주기 위한 EffectComposer, UnrealBloomPass, RenderPass 생성)
 const effectComposer = new EffectComposer(renderer)
 effectComposer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 effectComposer.setSize(window.innerWidth, window.innerHeight)
-
 const unrealBloomPass = new UnrealBloomPass()
 unrealBloomPass.strength = 3
 unrealBloomPass.radius = 0.1
 unrealBloomPass.threshold = 0.3
-
 var renderPass = new RenderPass(scene, camera)
 effectComposer.addPass(renderPass)
 
+
+// 배경에 별 뿌려진 듯한 효과 주기 위한 오브젝트들 생성
 const starVertices = []
 for (let i = 0; i < 500; i++) {
     const x = (Math.random() - 0.5) * 2000
@@ -78,27 +81,25 @@ starGeometry.setAttribute(
 const stars = new THREE.Points(starGeometry, starMaterial)
 scene.add(stars)
 
+
+//카메라 확대 정도
 camera.position.z = 10
 
-// lensflares
 
+//구체 중심부 라이팅
 const light = new THREE.Light(0xffffff, 1.5, 2000);
 light.color.setHSL(0.995, 0.5, 0.9);
-
 const textureLoader = new THREE.TextureLoader();
 const textureFlare3 = textureLoader.load('./img/lensflare3.png');
-
-
 const lensflare = new Lensflare();
-
 lensflare.addElement(new LensflareElement(textureFlare3, 500, 0.6));
 lensflare.addElement(new LensflareElement(textureFlare3, 1000, 0.7));
-
 
 light.add(lensflare);
 light.position.set(0, 0, 0);
 scene.add(light);
 
+//랜덤한 큐브 배치를 위한 난수 생성 함수
 function getRandomNumber() {
 
     var decimal;
@@ -150,6 +151,7 @@ function getRandomNumber() {
     };
 }
 
+//구체 위에 뿌려질 흰색 도트들 생성
 const dots = new THREE.Group()
 group.add(dots)
 
@@ -183,7 +185,7 @@ function createdots(lat, lng) {
     dots.add(dot)
 }
 
-
+//구체 위에 뿌려질 흰색 도트들 위치 랜덤하게 잡기
 for (let i = 0; i < 1000; i++) {
     var a = getRandomNumber(-90, 90)
     var b = getRandomNumber(-180, 180)
@@ -191,6 +193,7 @@ for (let i = 0; i < 1000; i++) {
 
 }
 
+//NLP 큐브 생성
 const NLP = new THREE.Group()
 group.add(NLP)
 
@@ -238,6 +241,7 @@ for (let i = 0; i < 70; i++) {
 
 }
 
+//CV 큐브 생성
 const CV = new THREE.Group()
 group.add(CV)
 
@@ -284,9 +288,10 @@ for (let i = 0; i < 70; i++) {
 
 }
 
+
+//AIED 큐브 생성
 const AIEd = new THREE.Group()
 group.add(AIEd)
-
 
 function createblue3(lat, lng, classification, title, text) {
     const box = new THREE.Mesh(
@@ -333,13 +338,13 @@ for (let i = 0; i < 70; i++) {
 }
 
 
-sphere.rotation.y = -Math.PI / 2
-
+// 그룹 전체 회전 기본 값
 group.rotation.offset = {
     x: 0,
     y: 0
 }
 
+// 마우스 위치 기본값
 const mouse = {
     x: undefined,
     y: undefined,
@@ -348,8 +353,11 @@ const mouse = {
     yPrev: undefined
 }
 
+// 큐브에 마우스 올렸을때 뜨는 썸네일 내용/박스
 const thumbnail = document.getElementById('thumbnail')
 const thumbnailEl = document.getElementById('thumbnailEl')
+
+// 큐브에 클릭 시 뜨는 논문 상세 내용/박스
 const popUpEl = document.getElementById('popUpEl')
 const classificationEL = document.getElementById('classEl')
 const titleEl = document.getElementById('titleEl')
@@ -357,6 +365,7 @@ const textEl = document.getElementById('textEl')
 const close = document.getElementById('close')
 var raycaster = new THREE.Raycaster();
 
+// Animate
 function animate() {
     requestAnimationFrame(animate)
     renderer.render(scene, camera)
@@ -377,6 +386,7 @@ function animate() {
     for (let i = 0; i < intersects1.length; i++) {
         const box = intersects1[i].object
 
+        //큐브가 정지상태가 아닐때만 썸네일이 뜨도록
         if (!stopstate) {
             gsap.set(thumbnail, {
                 display: 'block'
@@ -412,7 +422,7 @@ function animate() {
 animate()
 
 
-
+//마우스 드래그 시 구체 회전하도록 설정
 canvasContainer.addEventListener('mousedown', ({ clientX, clientY }) => {
     if (!stopstate) {
         mouse.down = true
@@ -420,8 +430,6 @@ canvasContainer.addEventListener('mousedown', ({ clientX, clientY }) => {
         mouse.yPrev = clientY
     }
 })
-
-
 addEventListener('mousemove', (event) => {
 
     mouse.x = ((event.clientX - innerWidth / 2) / innerWidth) * 2 - 0.01
@@ -445,13 +453,12 @@ addEventListener('mousemove', (event) => {
 
     }
 })
-
 addEventListener('mouseup', () => {
     mouse.down = false
 })
 
 
-
+//AIED 큐브들을 잇는 선
 const material1 = new THREE.LineBasicMaterial({
     color: 0xffffff,
     transparent: true,
@@ -459,6 +466,7 @@ const material1 = new THREE.LineBasicMaterial({
     alphaTest: 1
 });
 
+//NLP 큐브들을 잇는 선
 const material2 = new THREE.LineBasicMaterial({
     color: 0xffffff,
     transparent: true,
@@ -466,6 +474,7 @@ const material2 = new THREE.LineBasicMaterial({
     alphaTest: 1
 });
 
+//CV 큐브들을 잇는 선
 const material3 = new THREE.LineBasicMaterial({
     color: 0xffffff,
     transparent: true,
@@ -473,43 +482,27 @@ const material3 = new THREE.LineBasicMaterial({
     alphaTest: 1
 });
 
+
+//박스 위치를 저장하고 그 박스들 끼리 연결하는 선 생성
 const AIEdpoints = [];
 const NLPpoints = [];
 const CVpoints = [];
-
-const AIEddot = AIEd.children.filter(mesh => {
-    return mesh.geometry.type === "BoxGeometry"
-})
-
-const NLPdot = NLP.children.filter(mesh => {
-    return mesh.geometry.type === "BoxGeometry"
-})
-
-const CVdot = CV.children.filter(mesh => {
-    return mesh.geometry.type === "BoxGeometry"
-})
-
-for (let i = 0; i < AIEddot.length; i++) {
-    const box = AIEddot[i]
+for (let i = 0; i < AIEd.children.length; i++) {
+    const box = AIEd.children[i]
     AIEdpoints.push(new THREE.Vector3(box.position.x, box.position.y, box.position.z));
 }
-
-for (let i = 0; i < NLPdot.length; i++) {
-    const box = NLPdot[i]
+for (let i = 0; i < NLP.children.length; i++) {
+    const box = NLP.children[i]
     NLPpoints.push(new THREE.Vector3(box.position.x, box.position.y, box.position.z));
 }
-
-for (let i = 0; i < CVdot.length; i++) {
-    const box = CVdot[i]
+for (let i = 0; i < CV.children.length; i++) {
+    const box = CV.children[i]
     CVpoints.push(new THREE.Vector3(box.position.x, box.position.y, box.position.z));
 }
-
 const geometry1 = new THREE.BufferGeometry().setFromPoints(AIEdpoints);
 const line1 = new THREE.Line(geometry1, material1);
-
 const geometry2 = new THREE.BufferGeometry().setFromPoints(NLPpoints);
 const line2 = new THREE.Line(geometry2, material2);
-
 const geometry3 = new THREE.BufferGeometry().setFromPoints(CVpoints);
 const line3 = new THREE.Line(geometry3, material3);
 
@@ -520,6 +513,9 @@ group.add(line1)
 group.add(line2)
 group.add(line3)
 
+//좌측 상단에 클릭 시 해당 종류의 큐브만 필터링 해서 볼 수 있는 부분
+//큐브가 클릭 중이지 않을 때만 활성화
+//선택한 큐브 종류를 제외한 나머지 큐브들+선의 투명도 조절 
 const AIEdblock = document.getElementById("AIEd")
 const AIEdbox = document.getElementById("AIEdbox")
 const AIEdp = document.getElementById("AIEdp")
@@ -533,8 +529,8 @@ const Allblock = document.getElementById("All")
 const Allbox = document.getElementById("Allbox")
 const Allp = document.getElementById("Allp")
 
-
 AIEdblock.addEventListener('click', () => {
+
     if (!stopstate) {
         for (let i = 0; i < AIEd.children.length; i++) {
             const box = AIEd.children[i]
@@ -645,6 +641,7 @@ CVblock.addEventListener('click', () => {
     }
 });
 
+//전체 선택 시 원복
 Allblock.addEventListener('click', () => {
     if (!stopstate) {
         for (let i = 0; i < AIEd.children.length; i++) {
@@ -678,9 +675,10 @@ Allblock.addEventListener('click', () => {
     }
 });
 
-
+// 구체 회전 멈추는 조건값
 var stopstate = false
 
+// 큐브 클릭 시 큐브 선택
 window.addEventListener('click', boxClick, false);
 
 var raycaster2 = new THREE.Raycaster();
