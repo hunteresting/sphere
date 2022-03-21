@@ -535,141 +535,149 @@ const Allp = document.getElementById("Allp")
 
 
 AIEdblock.addEventListener('click', () => {
-    for (let i = 0; i < AIEd.children.length; i++) {
-        const box = AIEd.children[i]
-        if (box.material.opacity = 0.2) {
-            box.material.opacity = 1
-            box.invisibility = false
-        } else {
+    if (!stopstate) {
+        for (let i = 0; i < AIEd.children.length; i++) {
+            const box = AIEd.children[i]
+            if (box.material.opacity = 0.2) {
+                box.material.opacity = 1
+                box.invisibility = false
+            } else {
+                box.material.opacity = 0.2
+                box.invisibility = true
+            }
+        }
+        for (let i = 0; i < NLP.children.length; i++) {
+            const box = NLP.children[i]
             box.material.opacity = 0.2
             box.invisibility = true
         }
-    }
-    for (let i = 0; i < NLP.children.length; i++) {
-        const box = NLP.children[i]
-        box.material.opacity = 0.2
-        box.invisibility = true
-    }
-    for (let i = 0; i < CV.children.length; i++) {
-        const box = CV.children[i]
-        box.material.opacity = 0.2
-        box.invisibility = true
-    }
-    line1.material.opacity = 0.3
-    line2.material.opacity = 0.1
-    line3.material.opacity = 0.1
+        for (let i = 0; i < CV.children.length; i++) {
+            const box = CV.children[i]
+            box.material.opacity = 0.2
+            box.invisibility = true
+        }
+        line1.material.opacity = 0.3
+        line2.material.opacity = 0.1
+        line3.material.opacity = 0.1
 
-    Allbox.setAttribute("id", "Allboxc")
-    Allp.setAttribute("id", "Allpc")
-    AIEdbox.setAttribute("id", "AIEdbox")
-    AIEdp.setAttribute("id", "AIEdp")
-    NLPbox.setAttribute("id", "NLPboxc")
-    NLPp.setAttribute("id", "NLPpc")
-    CVbox.setAttribute("id", "CVboxc")
-    CVp.setAttribute("id", "CVpc")
-
+        Allbox.setAttribute("id", "Allboxc")
+        Allp.setAttribute("id", "Allpc")
+        AIEdbox.setAttribute("id", "AIEdbox")
+        AIEdp.setAttribute("id", "AIEdp")
+        NLPbox.setAttribute("id", "NLPboxc")
+        NLPp.setAttribute("id", "NLPpc")
+        CVbox.setAttribute("id", "CVboxc")
+        CVp.setAttribute("id", "CVpc")
+    }
 });
 
 NLPblock.addEventListener('click', () => {
-    for (let i = 0; i < AIEd.children.length; i++) {
-        const box = AIEd.children[i]
-        box.material.opacity = 0.2
-        box.invisibility = true
-    }
-    for (let i = 0; i < NLP.children.length; i++) {
-        const box = NLP.children[i]
-        if (box.material.opacity = 0.2) {
-            box.material.opacity = 1
-            box.invisibility = false
-        } else {
+    if (!stopstate) {
+        for (let i = 0; i < AIEd.children.length; i++) {
+            const box = AIEd.children[i]
             box.material.opacity = 0.2
             box.invisibility = true
         }
-    }
-    for (let i = 0; i < CV.children.length; i++) {
-        const box = CV.children[i]
-        box.material.opacity = 0.2
-        box.invisibility = true
-    }
-    line1.material.opacity = 0.1
-    line2.material.opacity = 0.3
-    line3.material.opacity = 0.1
+        for (let i = 0; i < NLP.children.length; i++) {
+            const box = NLP.children[i]
+            if (box.material.opacity = 0.2) {
+                box.material.opacity = 1
+                box.invisibility = false
+            } else {
+                box.material.opacity = 0.2
+                box.invisibility = true
+            }
+        }
+        for (let i = 0; i < CV.children.length; i++) {
+            const box = CV.children[i]
+            box.material.opacity = 0.2
+            box.invisibility = true
+        }
+        line1.material.opacity = 0.1
+        line2.material.opacity = 0.3
+        line3.material.opacity = 0.1
 
-    Allbox.setAttribute("id", "Allboxc")
-    Allp.setAttribute("id", "Allpc")
-    AIEdbox.setAttribute("id", "AIEdboxc")
-    AIEdp.setAttribute("id", "AIEdpc")
-    NLPbox.setAttribute("id", "NLPbox")
-    NLPp.setAttribute("id", "NLPp")
-    CVbox.setAttribute("id", "CVboxc")
-    CVp.setAttribute("id", "CVpc")
+        Allbox.setAttribute("id", "Allboxc")
+        Allp.setAttribute("id", "Allpc")
+        AIEdbox.setAttribute("id", "AIEdboxc")
+        AIEdp.setAttribute("id", "AIEdpc")
+        NLPbox.setAttribute("id", "NLPbox")
+        NLPp.setAttribute("id", "NLPp")
+        CVbox.setAttribute("id", "CVboxc")
+        CVp.setAttribute("id", "CVpc")
+    }
 });
 
 CVblock.addEventListener('click', () => {
-    for (let i = 0; i < AIEd.children.length; i++) {
-        const box = AIEd.children[i]
-        box.material.opacity = 0.2
-        box.invisibility = true
-    }
-    for (let i = 0; i < NLP.children.length; i++) {
-        const box = NLP.children[i]
-        box.material.opacity = 0.2
-        box.invisibility = true
-    }
-    for (let i = 0; i < CV.children.length; i++) {
-        const box = CV.children[i]
-        if (box.material.opacity = 0.2) {
-            box.material.opacity = 1
-            box.invisibility = false
-        } else {
+    if (!stopstate) {
+        for (let i = 0; i < AIEd.children.length; i++) {
+            const box = AIEd.children[i]
             box.material.opacity = 0.2
             box.invisibility = true
         }
-    }
-    line1.material.opacity = 0.1
-    line2.material.opacity = 0.1
-    line3.material.opacity = 0.3
+        for (let i = 0; i < NLP.children.length; i++) {
+            const box = NLP.children[i]
+            box.material.opacity = 0.2
+            box.invisibility = true
+        }
+        for (let i = 0; i < CV.children.length; i++) {
+            const box = CV.children[i]
+            if (box.material.opacity = 0.2) {
+                box.material.opacity = 1
+                box.invisibility = false
+            } else {
+                box.material.opacity = 0.2
+                box.invisibility = true
+            }
+        }
+        line1.material.opacity = 0.1
+        line2.material.opacity = 0.1
+        line3.material.opacity = 0.3
 
-    Allbox.setAttribute("id", "Allboxc")
-    Allp.setAttribute("id", "Allpc")
-    AIEdbox.setAttribute("id", "AIEdboxc")
-    AIEdp.setAttribute("id", "AIEdpc")
-    NLPbox.setAttribute("id", "NLPboxc")
-    NLPp.setAttribute("id", "NLPpc")
-    CVbox.setAttribute("id", "CVbox")
-    CVp.setAttribute("id", "CVp")
+        Allbox.setAttribute("id", "Allboxc")
+        Allp.setAttribute("id", "Allpc")
+        AIEdbox.setAttribute("id", "AIEdboxc")
+        AIEdp.setAttribute("id", "AIEdpc")
+        NLPbox.setAttribute("id", "NLPboxc")
+        NLPp.setAttribute("id", "NLPpc")
+        CVbox.setAttribute("id", "CVbox")
+        CVp.setAttribute("id", "CVp")
+    }
 });
 
 Allblock.addEventListener('click', () => {
-    for (let i = 0; i < AIEd.children.length; i++) {
-        const box = AIEd.children[i]
-        box.material.opacity = 1
-        box.invisibility = false
+    if (!stopstate) {
+        for (let i = 0; i < AIEd.children.length; i++) {
+            const box = AIEd.children[i]
+            box.material.opacity = 1
+            box.invisibility = false
 
-    }
-    for (let i = 0; i < NLP.children.length; i++) {
-        const box = NLP.children[i]
-        box.material.opacity = 1
-        box.invisibility = false
-    }
-    for (let i = 0; i < CV.children.length; i++) {
-        const box = CV.children[i]
-        box.material.opacity = 1
-        box.invisibility = false
-    }
-    line1.material.opacity = 0.3
-    line2.material.opacity = 0.3
-    line3.material.opacity = 0.3
+        }
+        for (let i = 0; i < NLP.children.length; i++) {
+            const box = NLP.children[i]
+            box.material.opacity = 1
+            box.invisibility = false
+        }
+        for (let i = 0; i < CV.children.length; i++) {
+            const box = CV.children[i]
+            box.material.opacity = 1
+            box.invisibility = false
+        }
+        line1.material.opacity = 0.3
+        line2.material.opacity = 0.3
+        line3.material.opacity = 0.3
 
-    Allbox.setAttribute("id", "Allbox")
-    Allp.setAttribute("id", "Allp")
-    AIEdbox.setAttribute("id", "AIEdbox")
-    AIEdp.setAttribute("id", "AIEdp")
-    NLPbox.setAttribute("id", "NLPbox")
-    NLPp.setAttribute("id", "NLPp")
-    CVbox.setAttribute("id", "CVbox")
-    CVp.setAttribute("id", "CVp")
+        Allbox.setAttribute("id", "Allbox")
+        Allp.setAttribute("id", "Allp")
+        AIEdbox.setAttribute("id", "AIEdbox")
+        AIEdp.setAttribute("id", "AIEdp")
+        NLPbox.setAttribute("id", "NLPbox")
+        NLPp.setAttribute("id", "NLPp")
+        CVbox.setAttribute("id", "CVbox")
+        CVp.setAttribute("id", "CVp")
+    }
 });
+
 
 var stopstate = false
 
