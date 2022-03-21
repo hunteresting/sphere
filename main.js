@@ -1,6 +1,5 @@
 import gsap from 'gsap'
 import * as THREE from 'three'
-
 import { Lensflare, LensflareElement } from './flare.js';
 import vertexShader from './shaders/vertex.glsl'
 import fragmentShader from './shaders/fragment.glsl'
@@ -26,7 +25,7 @@ renderer.setSize(canvasContainer.offsetWidth, canvasContainer.offsetHeight)
 renderer.setPixelRatio(window.devicePixelRatio)
 
 //Scene 배경 설정
-scene.background = new THREE.Color(0x01152E)
+scene.background = new THREE.TextureLoader().load('./img/back.png')
 
 //틀이 될 구체 설정
 const sphere = new THREE.Mesh(new THREE.SphereGeometry(5, 50, 50),
@@ -205,9 +204,7 @@ function createBlue(lat, lng, classification, title, text) {
             opacity: 1,
             transparent: true
         }),
-
     )
-
 
     const latitude = (lat / 180) * Math.PI
     const longitude = (lng / 180) * Math.PI
@@ -372,7 +369,7 @@ function animate() {
     raycaster.setFromCamera(mouse, camera)
 
     if (!stopstate) {
-        group.rotation.y += 0.0003
+        group.rotation.y += 0.001
     }
 
     var intersects1 = raycaster.intersectObjects(AIEd.children);
